@@ -37,5 +37,5 @@ For detailed integration steps, refer to our
 <kbd>[official documentation](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app)  ↗️ </kbd>. 
 
 ## Releases
-Find our <kbd>[Release Note](https://github.com/checkout/checkout-android-components/releases) ↗️</kbd>
+Find our <kbd>[Release Notes](https://github.com/checkout/checkout-android-components/releases) ↗️</kbd>
 
