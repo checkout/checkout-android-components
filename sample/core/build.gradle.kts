@@ -1,4 +1,3 @@
-import com.sun.tools.javac.resources.compiler
 import java.util.Properties
 import kotlin.apply
 
@@ -39,12 +38,7 @@ android {
                 // Default to empty string if the property is not set
                 getOrDefault("sandbox.components.processing_channel_id", "\"\"").toString(),
             )
-            buildConfigField(
-                "String",
-                "PRODUCTION_PROCESSING_CHANNEL_ID",
-                // Default to empty string if the property is not set
-                getOrDefault("production.components.processing_channel_id", "\"\"").toString(),
-            )
+
             buildConfigField(
                 "String",
                 "PRODUCTION_PUBLIC_KEY",
