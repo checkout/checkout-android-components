@@ -9,6 +9,8 @@ import com.checkout.android.components.sample.extension.toPaymentSessionLocale
 import com.checkout.android.components.sample.ui.model.Components
 import com.checkout.android.components.sample.ui.model.PaymentMethods
 import com.checkout.android.components.sample.ui.model.Settings
+import com.checkout.android.components.sample.utils.toDesignTokens
+import com.checkout.android.components.sample.utils.toPaymentSessionLocale
 import com.checkout.components.core.CheckoutComponentsFactory
 import com.checkout.components.interfaces.Environment
 import com.checkout.components.interfaces.api.CheckoutComponents
