@@ -12,6 +12,6 @@ internal val CheckoutOffWhite = Color(0xFFF4F2F2)
 internal val CheckoutWhite = Color(0xFFFFFFFF)
 
 internal val CheckoutOrange = Color(0xFFFF591A)
-internal val CheckoutGreen = Color(0xFFB3FF1A)
+internal val CheckoutGreen = Color(0xFF65c466)
 internal val CheckoutPurple = Color(0xFFAA00FF)
 internal val CheckoutPink = Color(0xFFFF1AD1)

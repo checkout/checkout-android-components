@@ -40,15 +40,22 @@ class MainActivity : ComponentActivity() {
           ) {
             val state by viewModel.screenState.collectAsStateWithLifecycle()
             val settingState by viewModel.settingState.collectAsStateWithLifecycle()
-            val context = LocalContext.current
+              val advancedSettingsState by viewModel.advancedSettings.collectAsStateWithLifecycle()
+
+              val context = LocalContext.current
 
             DemoScreen(
               modifier = Modifier.fillMaxWidth(),
               screenState = state,
               settingState = settingState,
               showSettings = viewModel::showSettings,
+                advancedSettingsState = advancedSettingsState,
               showFlowComponent = { viewModel.showFlowComponent(context) },
               updateSettings = viewModel::updateSettings,
+                updateAdvancedSettings = viewModel::updateAdvancedSettings,
+                onSubmitClicked = viewModel::onSubmit,
+                onAmountChanged = viewModel::onAmountChanged,
+                onCheckTermsAndConditions = viewModel::onCheckTermsAndConditions,
             )
           }
         }

@@ -1,6 +1,7 @@
 package com.checkout.android.components.sample.ui.model
 
 import com.checkout.components.interfaces.api.PaymentMethodComponent
+import com.checkout.components.interfaces.model.TokenizationResult
 
 /**
  * Represents the different UI states for the Main Screen in the sample application.
@@ -17,6 +18,13 @@ object InitialScreenState : MainScreenState()
  */
 data class PaymentComponentScreenState(
   val paymentComponent: PaymentMethodComponent,
+  val tokenizedResult: TokenizationResult? = null,
+  val paymentId: String = "",
+  val showTermsAndConditions: Boolean = true,
+  val termAndConditions: Boolean = true,
+  val addressConfiguration: SampleAddressConfiguration = SampleAddressConfiguration.Empty,
+  val showAddressPrefill: Boolean = true,
+  val prefillAddress: Boolean = true,
 ) : MainScreenState()
 
 /**

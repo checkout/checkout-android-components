@@ -1,4 +1,31 @@
 <resources>
     <string name="app_name">CheckoutComponent Sample</string>
     <string name="show_flow">Show Flow</string>
+
+    <!-- Settings Screen Labels -->
+    <string name="label_component">Component:</string>
+    <string name="label_with">with</string>
+    <string name="label_environment">Environment:</string>
+    <string name="label_appearance">Appearance:</string>
+    <string name="label_locale">Locale:</string>
+    <string name="label_ps_locale">PS Locale:</string>
+
+    <!-- Advanced Settings Section -->
+    <string name="label_advanced_features">Advanced Features</string>
+    <string name="label_show_card_pay_button">Show card pay button</string>
+    <string name="label_payment_button_action">Payment button action:</string>
+    <string name="label_show_google_pay_button">Show Google Pay button</string>
+    <string name="label_display_cardholder_name">Display Cardholder Name:</string>
+    <string name="label_card_accepted_schemes">Card accepted card schemes</string>
+    <string name="label_google_pay_accepted_schemes">Google Pay accepted card schemes</string>
+    <string name="label_remember_me_accepted_schemes">Remember Me accepted card schemes</string>
+    <string name="label_card_accepted_types">Card accepted card types</string>
+    <string name="label_google_pay_accepted_types">Google Pay accepted card types</string>
+    <string name="label_remember_me_accepted_types">Remember Me accepted card types</string>
+    <string name="label_submit_payment">Submit payment:</string>
+    <string name="label_show_update_amount_view">Show update amount view</string>
+    <string name="label_show_handle_tap">Show validate payment</string>
+    <string name="label_custom_button_type">Custom button type:</string>
+    <string name="label_address_config">Address Config:</string>
+    <string name="term_condition_text">Please accept terms and conditions</string>
 </resources>
