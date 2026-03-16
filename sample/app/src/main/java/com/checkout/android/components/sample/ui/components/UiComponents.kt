@@ -10,6 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.KeyboardActionHandler
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
@@ -19,6 +24,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -32,9 +38,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.checkout.android.components.sample.ui.theme.CheckoutGreen
 
 /**
@@ -118,7 +127,7 @@ fun <T> MultiSelectMenu(
       Text(
         text = displayText,
         color = MaterialTheme.colorScheme.primary,
-        fontSize = LABEL_FONT_SIZE,
+        style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center,
       )
     }
@@ -176,7 +185,7 @@ fun <T> StatefulDropdownRow(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.spacedBy(ELEMENT_SPACING),
   ) {
-    Text(text = label, fontSize = LABEL_FONT_SIZE)
+    Text(text = label, style = MaterialTheme.typography.bodyLarge)
     SingleSelectMenu(
       options = options,
       selectedOption = selectedValue,
@@ -204,7 +213,11 @@ fun DropdownText(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier.clickable(onClick = onClick),
   ) {
-    Text(text = text, color = MaterialTheme.colorScheme.primary, fontSize = LABEL_FONT_SIZE)
+    Text(
+      text = text,
+      color = MaterialTheme.colorScheme.primary,
+      style = MaterialTheme.typography.bodyLarge,
+    )
     Icon(
       imageVector = Icons.Default.ArrowDropDown,
       tint = MaterialTheme.colorScheme.primary,
@@ -226,18 +239,19 @@ fun DropdownText(
 @Composable
 fun PrimaryExpandableRow(
   label: String,
-  initiallyExpanded: Boolean = false,
+  modifier: Modifier = Modifier,
+  isExpanded: Boolean = false,
+  onExpanded: (Boolean) -> Unit = {},
   content: @Composable () -> Unit,
 ) {
-  var isExpanded by remember { mutableStateOf(initiallyExpanded) }
   val rotationState by animateFloatAsState(
     targetValue = if (isExpanded) 180f else 0f,
     label = "Arrow Rotation",
   )
 
-  Column(modifier = Modifier.fillMaxWidth()) {
+  Column(modifier = modifier.fillMaxWidth()) {
     TextButton(
-      onClick = { isExpanded = !isExpanded },
+      onClick = { onExpanded(!isExpanded) },
       colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary),
     ) {
       Row(
@@ -247,7 +261,7 @@ fun PrimaryExpandableRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
       ) {
-        Text(text = label, fontSize = LABEL_FONT_SIZE)
+        Text(text = label, style = MaterialTheme.typography.bodyLarge)
         Icon(
           imageVector = Icons.Default.KeyboardArrowDown,
           contentDescription = "Expand",
@@ -278,7 +292,7 @@ fun SwitchRow(label: String, isChecked: Boolean, onCheckedChange: (Boolean) -> U
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
   ) {
-    Text(text = label, fontSize = LABEL_FONT_SIZE)
+    Text(text = label, style = MaterialTheme.typography.bodyLarge)
     Switch(
       checked = isChecked,
       onCheckedChange = onCheckedChange,
@@ -320,7 +334,7 @@ fun <T> SecondaryDropdownRow(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
   ) {
-    Text(text = label, fontSize = LABEL_FONT_SIZE)
+    Text(text = label, style = MaterialTheme.typography.bodyLarge)
     SingleSelectMenu(
       options = options,
       displayText = displayText,
@@ -373,7 +387,7 @@ fun SecondaryExpandableRow(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-      Text(text = label, fontSize = LABEL_FONT_SIZE)
+      Text(text = label, style = MaterialTheme.typography.bodyLarge)
       Icon(
         imageVector = Icons.Default.KeyboardArrowDown,
         contentDescription = "Expand",
@@ -456,31 +470,96 @@ fun SelectionItem(
   }
 }
 
+@Composable
+fun SampleEmailOutlinedTextField(
+  label: String,
+  modifier: Modifier = Modifier,
+  currentValue: String = "",
+  onDone: (String) -> Unit = {},
+) {
+  val state = rememberTextFieldState(currentValue)
+
+  SampleOutlineTextField(
+    label = label,
+    modifier = modifier,
+    keyboardType = KeyboardType.Email,
+    state = state,
+    onDone = onDone,
+  )
+}
+
+@Composable
+fun SampleNumberOutlinedTextField(
+  label: String,
+  modifier: Modifier = Modifier,
+  currentValue: String = "",
+  onDone: (String) -> Unit = {},
+) {
+  val state = rememberTextFieldState(currentValue)
+
+  SampleOutlineTextField(
+    label = label,
+    modifier = modifier,
+    keyboardType = KeyboardType.Phone,
+    state = state,
+    onDone = onDone,
+  )
+}
+
+@Composable
+fun SampleOutlineTextField(
+  label: String,
+  state: TextFieldState,
+  onDone: (String) -> Unit,
+  modifier: Modifier = Modifier,
+  keyboardType: KeyboardType = KeyboardType.Text,
+) {
+  val keyboardController = LocalSoftwareKeyboardController.current
+
+  OutlinedTextField(
+    modifier = modifier,
+    state = state,
+    label = {
+      Text(text = label, style = MaterialTheme.typography.bodySmall)
+    },
+    keyboardOptions = KeyboardOptions(
+      capitalization = KeyboardCapitalization.None,
+      autoCorrectEnabled = false,
+      keyboardType = keyboardType,
+      imeAction = ImeAction.Done,
+    ),
+    lineLimits = TextFieldLineLimits.SingleLine,
+    onKeyboardAction = KeyboardActionHandler {
+      onDone(state.text.toString())
+      keyboardController?.hide()
+    },
+  )
+}
+
 // ============================================================================
 // Dimension Constants
 // ============================================================================
 
 /** Standard icon size used throughout the component library. */
-private val ICON_SIZE = 18.dp
+internal val ICON_SIZE = 18.dp
 
 /** Standard padding for vertical spacing in rows. */
-private val ROW_VERTICAL_PADDING = 12.dp
+internal val ROW_VERTICAL_PADDING = 12.dp
+
+/** Standard horizontal arrangement space by. */
+internal val HORIZONTAL_ARRANGEMENT = 12.dp
+
+/** Standard lazy column paddings */
+internal val LAZY_COLUMN_PADDING = 24.dp
 
 /** Standard padding for header rows. */
-private val HEADER_VERTICAL_PADDING = 16.dp
+internal val HEADER_VERTICAL_PADDING = 16.dp
 
 /** Standard horizontal spacing between elements. */
-private val ELEMENT_SPACING = 8.dp
+internal val ELEMENT_SPACING = 8.dp
 
 /** Small vertical padding used in switch rows. */
-private val SWITCH_ROW_PADDING = 4.dp
+internal val SWITCH_ROW_PADDING = 4.dp
 
 /** Minimal vertical padding used for text adjustments. */
-private val MINIMAL_PADDING = 2.dp
-
-// ============================================================================
-// Font Size Constants
-// ============================================================================
-
-/** Standard text font size for labels and menu items. */
-private val LABEL_FONT_SIZE = 16.sp
+internal val MINIMAL_PADDING = 2.dp

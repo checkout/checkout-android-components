@@ -9,6 +9,7 @@ import com.checkout.android.components.sample.ui.model.Components
 import com.checkout.android.components.sample.ui.model.InitialScreenState
 import com.checkout.android.components.sample.ui.model.MainScreenState
 import com.checkout.android.components.sample.ui.model.PaymentComponentScreenState
+import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.SettingScreenState
 import com.checkout.android.components.sample.ui.model.Settings
 import com.checkout.android.components.sample.ui.model.SubmitPaymentHandler
@@ -17,8 +18,10 @@ import com.checkout.components.interfaces.component.CardConfiguration
 import com.checkout.components.interfaces.component.ComponentCallback
 import com.checkout.components.interfaces.component.ComponentOption
 import com.checkout.components.interfaces.component.GooglePayConfiguration
+import com.checkout.components.interfaces.component.RememberMeConfiguration
 import com.checkout.components.interfaces.model.ApiCallResult
 import com.checkout.components.interfaces.model.CallbackResult
+import com.checkout.components.interfaces.model.Phone
 import com.checkout.components.interfaces.model.TokenizationResult
 import com.checkout.components.interfaces.model.UpdateDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,12 +40,15 @@ class MainViewModel @Inject constructor(
   private val _settingState = MutableStateFlow(Settings())
 
   private val _advancedSettings = MutableStateFlow(AdvancedSettings())
+  private val _rememberMeSettings = MutableStateFlow(RememberMeSettings())
 
   val screenState = _screenState.asStateFlow()
 
   val settingState = _settingState.asStateFlow()
 
   val advancedSettings = _advancedSettings.asStateFlow()
+
+  val rememberMeSettings = _rememberMeSettings.asStateFlow()
 
   fun showFlowComponent(context: Context) {
     viewModelScope.launch {
@@ -54,6 +60,30 @@ class MainViewModel @Inject constructor(
       )
 
       val component = flowComponent.createComponents(config)
+
+      val rememberMeConfiguration = if (rememberMeSettings.value.enableRememberMe) {
+        val rememberMeSettings = _rememberMeSettings.value
+        val phone = if (rememberMeSettings.phoneNumber.isNotEmpty() && rememberMeSettings.countryCode.isNotEmpty()) {
+          Phone(
+            number = rememberMeSettings.phoneNumber,
+            countryCode = rememberMeSettings.countryCode,
+          )
+        } else {
+          null
+        }
+
+        RememberMeConfiguration(
+          showPayButton = rememberMeSettings.showRememberMePayButton,
+          data = RememberMeConfiguration.Data(
+            email = rememberMeSettings.email.takeIf { it.isNotEmpty() },
+            phone = phone,
+          ),
+          acceptedCardSchemes = advancedSettings.rememberMeAcceptedScheme,
+          acceptedCardTypes = advancedSettings.rememberMeAcceptedTypes,
+        )
+      } else {
+        null
+      }
 
       val specificOptions = ComponentOption(
         showPayButton = advancedSettings.showCardPayButton,
@@ -67,6 +97,7 @@ class MainViewModel @Inject constructor(
           acceptedCardSchemes = advancedSettings.cardAcceptedScheme,
         ),
         addressConfiguration = advancedSettings.addressConfiguration.configuration(),
+        rememberMeConfiguration = rememberMeConfiguration,
       )
 
       val paymentMethodComponent = when (settingState.value.component) {
@@ -106,6 +137,12 @@ class MainViewModel @Inject constructor(
   fun updateAdvancedSettings(advancedSettings: AdvancedSettings) {
     _advancedSettings.update {
       advancedSettings
+    }
+  }
+
+  fun updateRememberMeSettings(rememberMeSettings: RememberMeSettings) {
+    _rememberMeSettings.update {
+      rememberMeSettings
     }
   }
 

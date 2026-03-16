@@ -28,4 +28,13 @@
     <string name="label_custom_button_type">Custom button type:</string>
     <string name="label_address_config">Address Config:</string>
     <string name="term_condition_text">Please accept terms and conditions</string>
+
+    <!-- RememberMe Settings Section -->
+    <string name="label_rememberme_configuration">RememberMe Configurations</string>
+    <string name="label_rememberme_enable">Enable RememberMe</string>
+    <string name="label_rememberme_show_pay_button">Show RememberMe pay button</string>
+    <string name="label_rememberme_email">Email</string>
+    <string name="label_rememberme_country_code">Country Code</string>
+    <string name="label_rememberme_phone_number">Phone Number</string>
+
 </resources>

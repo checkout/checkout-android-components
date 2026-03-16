@@ -43,6 +43,7 @@ import com.checkout.android.components.sample.ui.model.AdvancedSettings
 import com.checkout.android.components.sample.ui.model.InitialScreenState
 import com.checkout.android.components.sample.ui.model.MainScreenState
 import com.checkout.android.components.sample.ui.model.PaymentComponentScreenState
+import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.SettingScreenState
 import com.checkout.android.components.sample.ui.model.Settings
 import com.checkout.android.components.sample.ui.theme.CheckoutComponentSampleTheme
@@ -52,11 +53,13 @@ fun DemoScreen(
   screenState: MainScreenState,
   settingState: Settings,
   advancedSettingsState: AdvancedSettings,
+  rememberMeSettings: RememberMeSettings,
   modifier: Modifier = Modifier,
   showSettings: () -> Unit = {},
   showFlowComponent: () -> Unit,
   updateSettings: (Settings) -> Unit,
   updateAdvancedSettings: (AdvancedSettings) -> Unit,
+  updateRememberMeSettings: (RememberMeSettings) -> Unit,
   onSubmitClicked: () -> Unit = {},
   onAmountChanged: (Int) -> Unit = {},
   onCheckTermsAndConditions: (Boolean) -> Unit = {},
@@ -87,6 +90,8 @@ fun DemoScreen(
           advancedSettings = advancedSettingsState,
           onUpdated = updateSettings,
           onUpdateAdvancedSettings = updateAdvancedSettings,
+          rememberMeSettings = rememberMeSettings,
+          onUpdateRememberMeSettings = updateRememberMeSettings,
         )
       }
 
@@ -128,10 +133,12 @@ private fun InitialScreenPreview() {
       screenState = InitialScreenState,
       settingState = Settings(),
       advancedSettingsState = AdvancedSettings(),
+      rememberMeSettings = RememberMeSettings(),
       showSettings = {},
       showFlowComponent = {},
       updateSettings = {},
       updateAdvancedSettings = {},
+      updateRememberMeSettings = {},
     )
   }
 }

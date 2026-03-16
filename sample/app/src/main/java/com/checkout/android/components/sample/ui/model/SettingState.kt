@@ -22,6 +22,7 @@ data class Settings(
 
 @Stable
 data class AdvancedSettings(
+  val advancedSettingsExpanded: Boolean = false,
   val showCardPayButton: Boolean = true,
   val paymentAction: PaymentButtonAction = PaymentButtonAction.PAYMENT,
   val showGooglePayButton: Boolean = true,
@@ -41,8 +42,9 @@ data class AdvancedSettings(
 
 @Stable
 data class RememberMeSettings(
-  val enableRememberMe: Boolean = true,
-  val showRememberMePayButton: Boolean = true,
+  val rememberMeSettingsExpanded: Boolean = false,
+  val enableRememberMe: Boolean = false,
+  val showRememberMePayButton: Boolean = false,
   val email: String = "",
   val countryCode: String = "",
   val phoneNumber: String = "",

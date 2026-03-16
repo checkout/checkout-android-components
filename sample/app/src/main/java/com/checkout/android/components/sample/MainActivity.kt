@@ -32,32 +32,34 @@ class MainActivity : ComponentActivity() {
         Scaffold(
           modifier = Modifier.fillMaxSize(),
         ) { innerPadding ->
-          Box(
+
+          val state by viewModel.screenState.collectAsStateWithLifecycle()
+
+          val settingState by viewModel.settingState.collectAsStateWithLifecycle()
+
+          val advancedSettingsState by viewModel.advancedSettings.collectAsStateWithLifecycle()
+            val rememberMeSettings by viewModel.rememberMeSettings.collectAsStateWithLifecycle()
+
+          val context = LocalContext.current
+
+          DemoScreen(
             modifier = Modifier
               .padding(innerPadding)
-              .fillMaxSize(),
-            contentAlignment = Alignment.Center,
-          ) {
-            val state by viewModel.screenState.collectAsStateWithLifecycle()
-            val settingState by viewModel.settingState.collectAsStateWithLifecycle()
-              val advancedSettingsState by viewModel.advancedSettings.collectAsStateWithLifecycle()
+              .fillMaxWidth(),
+            screenState = state,
+            settingState = settingState,
+            advancedSettingsState = advancedSettingsState,
+              rememberMeSettings = rememberMeSettings,
 
-              val context = LocalContext.current
-
-            DemoScreen(
-              modifier = Modifier.fillMaxWidth(),
-              screenState = state,
-              settingState = settingState,
               showSettings = viewModel::showSettings,
-                advancedSettingsState = advancedSettingsState,
-              showFlowComponent = { viewModel.showFlowComponent(context) },
-              updateSettings = viewModel::updateSettings,
-                updateAdvancedSettings = viewModel::updateAdvancedSettings,
-                onSubmitClicked = viewModel::onSubmit,
-                onAmountChanged = viewModel::onAmountChanged,
-                onCheckTermsAndConditions = viewModel::onCheckTermsAndConditions,
-            )
-          }
+            showFlowComponent = { viewModel.showFlowComponent(context) },
+            updateSettings = viewModel::updateSettings,
+            updateAdvancedSettings = viewModel::updateAdvancedSettings,
+              updateRememberMeSettings = viewModel::updateRememberMeSettings,
+              onSubmitClicked = viewModel::onSubmit,
+            onAmountChanged = viewModel::onAmountChanged,
+            onCheckTermsAndConditions = viewModel::onCheckTermsAndConditions,
+          )
         }
       }
     }
