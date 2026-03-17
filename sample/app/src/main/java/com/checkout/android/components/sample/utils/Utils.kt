@@ -51,7 +51,6 @@ fun Appearance.toDesignTokens(): DesignTokens? = when (this) {
     ),
     fonts = mapOf(
       FontName.Footnote to DefaultFonts.FOOTNOTE,
-      FontName.Label to DefaultFonts.LABEL,
       FontName.Input to DefaultFonts.INPUT,
       FontName.Label to DefaultFonts.LABEL,
       FontName.Button to DefaultFonts.BUTTON,

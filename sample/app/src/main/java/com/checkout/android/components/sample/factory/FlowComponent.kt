@@ -52,7 +52,10 @@ class FlowComponent @Inject constructor(
    *
    * @param context The application context.
    * @param settings The user-defined settings for the checkout components.
-   **/
+   * @param callbacks The component callbacks to be used for handling component events.
+   *
+   * @return A [CheckoutComponentConfiguration] initialized with the provided settings and session data.
+   */
   suspend fun createConfigurationFromSettings(
     context: Context,
     settings: Settings = Settings(),
@@ -135,6 +138,8 @@ class FlowComponent @Inject constructor(
    * @see CheckoutComponents.create
    * @see ComponentName.Flow
    * @see ComponentOption
+   *
+   * @return A [PaymentMethodComponent] configured for [ComponentName.Flow].
    */
   fun createFlowPaymentMethodComponent(
     checkoutComponents: CheckoutComponents,
@@ -157,6 +162,8 @@ class FlowComponent @Inject constructor(
    * @see CheckoutComponents.create
    * @see PaymentMethodName.Card
    * @see ComponentOption
+   *
+   * @return A [PaymentMethodComponent] configured for [PaymentMethodName.Card].
    */
   fun createCardPaymentMethodComponent(
     checkoutComponents: CheckoutComponents,
@@ -166,51 +173,55 @@ class FlowComponent @Inject constructor(
     specificOptions = specificOptions,
   )
 
-  /**
-   * Cleans up the checkout component instance when the component is no longer needed.
-   *
-   * This function should be called when the hosting activity or view model is destroyed to ensure
-   * proper resource cleanup and prevent memory leaks. It clears the internal reference to the
-   * [CheckoutComponents] instance.
-   */
+    /**
+     * Submits the payment session data to the repository to finalize the payment process.
+     *
+     * @param sessionData The session data containing payment information to be submitted.
+     * @param settings The user-defined settings used to determine the environment.
+     * @param amount The transaction amount.
+     *
+     * @return An [ApiCallResult] indicating the outcome of the submission, including result details on success.
+     */
+  suspend fun handleSubmit(
+    sessionData: String,
+    settings: Settings,
+    amount: Int = 99999,
+  ): ApiCallResult {
+    val paymentSessionId = this.paymentSessionId ?: return ApiCallResult.Failure
+
+    val response = repository.submitPaymentSession(
+      environment = settings.environment,
+      submitPaymentSession = SubmitPaymentSession(
+        sessionData = sessionData,
+        amount = amount,
+      ),
+      paymentSessionId = paymentSessionId,
+    )
+
+    if (response.error != null) return ApiCallResult.Failure
+
+    return ApiCallResult.Success(
+      PaymentSessionSubmissionResult(
+        id = response.id,
+        type = response.type,
+        status = response.status,
+        action = response.action,
+        declineReason = response.declineReason,
+      ),
+    )
+  }
+
+    /**
+     * Cleans up the checkout component instance when the component is no longer needed.
+     *
+     * This function should be called when the hosting activity or view model is destroyed to ensure
+     * proper resource cleanup and prevent memory leaks. It clears the internal reference to the
+     * [CheckoutComponents] instance.
+     */
   fun onCleared() {
     checkoutComponent = null
     paymentSessionId = null
   }
-
-    suspend fun handleSubmit(
-        sessionData: String,
-        settings: Settings,
-        amount: Int = 99999,
-    ): ApiCallResult {
-        val paymentSessionId = this.paymentSessionId ?: return ApiCallResult.Failure
-
-        val environment = when (settings.environment) {
-            LocalEnvironment.Sandbox -> Environment.SANDBOX
-            LocalEnvironment.Production -> Environment.PRODUCTION
-        }
-
-        val response = repository.submitPaymentSession(
-            environment = environment,
-            submitPaymentSession = SubmitPaymentSession(
-                sessionData = sessionData,
-                amount = amount,
-            ),
-            paymentSessionId = paymentSessionId,
-        )
-
-        if (response.error != null) return ApiCallResult.Failure
-
-        return ApiCallResult.Success(
-            PaymentSessionSubmissionResult(
-                id = response.id,
-                type = response.type,
-                status = response.status,
-                action = response.action,
-                declineReason = response.declineReason,
-            ),
-        )
-    }
 
   private fun createGooglePlayFlowCoordinator(
     context: Context,

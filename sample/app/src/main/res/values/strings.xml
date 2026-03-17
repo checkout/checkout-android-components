@@ -36,5 +36,8 @@
     <string name="label_rememberme_email">Email</string>
     <string name="label_rememberme_country_code">Country Code</string>
     <string name="label_rememberme_phone_number">Phone Number</string>
+    <string name="label_payment_error">Payment Error</string>
+    <string name="label_payment_successful">Payment Successful</string>
+    <string name="payment_id">Payment ID: %1$s</string>
 
 </resources>

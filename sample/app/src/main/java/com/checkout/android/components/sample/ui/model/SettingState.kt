@@ -94,11 +94,6 @@ enum class Appearance {
   Dark,
 }
 
-enum class PaymentAction {
-  Payment,
-  Tokenize,
-}
-
 enum class SubmitPaymentHandler {
   SDK,
   HandleSubmit,

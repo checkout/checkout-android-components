@@ -9,6 +9,7 @@ import com.checkout.android.components.sample.ui.model.Components
 import com.checkout.android.components.sample.ui.model.InitialScreenState
 import com.checkout.android.components.sample.ui.model.MainScreenState
 import com.checkout.android.components.sample.ui.model.PaymentComponentScreenState
+import com.checkout.android.components.sample.ui.model.PaymentResultState
 import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.SettingScreenState
 import com.checkout.android.components.sample.ui.model.Settings
@@ -18,12 +19,15 @@ import com.checkout.components.interfaces.component.CardConfiguration
 import com.checkout.components.interfaces.component.ComponentCallback
 import com.checkout.components.interfaces.component.ComponentOption
 import com.checkout.components.interfaces.component.GooglePayConfiguration
+import com.checkout.components.interfaces.component.PaymentButtonAction
 import com.checkout.components.interfaces.component.RememberMeConfiguration
 import com.checkout.components.interfaces.model.ApiCallResult
 import com.checkout.components.interfaces.model.CallbackResult
+import com.checkout.components.interfaces.model.CardMetadata
 import com.checkout.components.interfaces.model.Phone
 import com.checkout.components.interfaces.model.TokenizationResult
 import com.checkout.components.interfaces.model.UpdateDetails
+import com.checkout.components.wallet.WalletComponent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -63,14 +67,15 @@ class MainViewModel @Inject constructor(
 
       val rememberMeConfiguration = if (rememberMeSettings.value.enableRememberMe) {
         val rememberMeSettings = _rememberMeSettings.value
-        val phone = if (rememberMeSettings.phoneNumber.isNotEmpty() && rememberMeSettings.countryCode.isNotEmpty()) {
-          Phone(
-            number = rememberMeSettings.phoneNumber,
-            countryCode = rememberMeSettings.countryCode,
-          )
-        } else {
-          null
-        }
+        val phone =
+          if (rememberMeSettings.phoneNumber.isNotEmpty() && rememberMeSettings.countryCode.isNotEmpty()) {
+            Phone(
+              number = rememberMeSettings.phoneNumber,
+              countryCode = rememberMeSettings.countryCode,
+            )
+          } else {
+            null
+          }
 
         RememberMeConfiguration(
           showPayButton = rememberMeSettings.showRememberMePayButton,
@@ -166,6 +171,12 @@ class MainViewModel @Inject constructor(
     }
   }
 
+  fun onDismissBottomSheet() {
+    _screenState.update {
+      (it as PaymentComponentScreenState).copy(paymentResult = PaymentResultState())
+    }
+  }
+
   private fun buildComponentCallbacks(): ComponentCallback = ComponentCallback(
     onReady = { paymentMethodComponent -> println("$paymentMethodComponent Ready") },
     onChange = { paymentMethodComponent ->
@@ -178,10 +189,33 @@ class MainViewModel @Inject constructor(
     },
     onError = { paymentMethodComponent, error ->
       println("$paymentMethodComponent Error: $error")
+      _screenState.update {
+        (it as PaymentComponentScreenState).copy(paymentResult = it.paymentResult.copy(error = error))
+      }
     },
     onSuccess = { paymentMethodComponent, paymentSessionResponse ->
       println("$paymentMethodComponent Success: $paymentSessionResponse")
+
+      _screenState.update { state ->
+        if (state !is PaymentComponentScreenState) return@update state
+
+        val currentPaymentResult = state.paymentResult
+
+        val shouldShowNoToken =
+          currentPaymentResult.token.isEmpty() && paymentMethodComponent is WalletComponent
+        val finalToken =
+          if (shouldShowNoToken) "no tokenization" else currentPaymentResult.token
+
+        state.copy(
+          paymentResult = currentPaymentResult.copy(
+            paymentId = paymentSessionResponse,
+            token = finalToken,
+          ),
+        )
+      }
     },
+
+    onCardBinChanged = ::onCardBinChanged,
 
     onTokenized = ::onTokenize,
 
@@ -190,16 +224,34 @@ class MainViewModel @Inject constructor(
     handleTap = if (advancedSettings.value.showHandleTapConfiguration) ::handleTap else null,
   )
 
-  private suspend fun onTokenize(onTokenizeResult: TokenizationResult): CallbackResult {
-    println("onTokenize: $onTokenizeResult")
-    _screenState.update {
-      (it as PaymentComponentScreenState).copy(tokenizedResult = onTokenizeResult)
+  private suspend fun onTokenize(tokenizeResult: TokenizationResult): CallbackResult {
+    println("onTokenize: $tokenizeResult")
+    _screenState.update { state ->
+      if (state !is PaymentComponentScreenState) return@update state
+
+      val currentPaymentResult = state.paymentResult
+
+      val advancedSettings = advancedSettings.value
+
+      if (advancedSettings.paymentAction == PaymentButtonAction.TOKENIZE ||
+        (!advancedSettings.showCardPayButton && advancedSettings.customButtonType == PaymentButtonAction.TOKENIZE)
+      ) {
+        state.copy(paymentResult = currentPaymentResult.copy(token = tokenizeResult.data.token, paymentId = "Payment Action Tokenize"))
+      } else {
+        state.copy(paymentResult = currentPaymentResult.copy(token = tokenizeResult.data.token))
+      }
     }
+    return CallbackResult.Accepted
+  }
+
+  private fun onCardBinChanged(cardMetadata: CardMetadata): CallbackResult {
+    println("onCardBinChanged: $cardMetadata")
     return CallbackResult.Accepted
   }
 
   private suspend fun handleSubmit(sessionData: String): ApiCallResult = flowComponent.handleSubmit(sessionData, settingState.value)
 
+  @Suppress("RedundantSuspendModifier") // handleTap callback is a suspend function, even if we are not have any suspended call
   private suspend fun handleTap(paymentMethodComponent: PaymentMethodComponent): Boolean {
     println("handleTap: ${paymentMethodComponent.name}")
     return (screenState.value as? PaymentComponentScreenState)?.termAndConditions ?: false

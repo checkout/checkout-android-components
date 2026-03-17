@@ -59,6 +59,7 @@ class MainActivity : ComponentActivity() {
               onSubmitClicked = viewModel::onSubmit,
             onAmountChanged = viewModel::onAmountChanged,
             onCheckTermsAndConditions = viewModel::onCheckTermsAndConditions,
+            onDismissBottomSheet = viewModel::onDismissBottomSheet,
           )
         }
       }

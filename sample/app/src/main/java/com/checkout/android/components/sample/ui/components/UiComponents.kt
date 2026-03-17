@@ -18,6 +18,8 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -44,7 +46,9 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.checkout.android.components.sample.ui.model.PaymentResultState
 import com.checkout.android.components.sample.ui.theme.CheckoutGreen
+import com.checkout.components.interfaces.error.CheckoutError
 
 /**
  * A composable that displays a dropdown menu for selecting a single option from a list.
@@ -560,6 +564,3 @@ internal val ELEMENT_SPACING = 8.dp
 
 /** Small vertical padding used in switch rows. */
 internal val SWITCH_ROW_PADDING = 4.dp
-
-/** Minimal vertical padding used for text adjustments. */
-internal val MINIMAL_PADDING = 2.dp

@@ -1,3 +1,5 @@
+@file:Suppress("RestrictedApi")
+
 package com.checkout.android.components.sample.ui
 
 import androidx.compose.animation.AnimatedVisibility
