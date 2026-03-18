@@ -1,4 +1,4 @@
-package com.checkout.android.components.sample.core.session.response
+package com.checkout.android.components.sample.core.network.model.session
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -11,10 +11,4 @@ data class SubmitPaymentSessionResponse(
   val action: PaymentAction? = null,
   @SerialName("decline_reason")
   val declineReason: String? = null,
-)
-
-@Serializable
-data class PaymentAction(
-  val type: String,
-  val url: String? = null,
 )

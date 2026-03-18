@@ -13,7 +13,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -22,26 +21,12 @@ object ApiModule {
 
   @Singleton
   @Provides
-  @Sandbox
   fun provideSandboxPaymentSessionApi(
     okHttpClient: OkHttpClient,
     factory: Converter.Factory,
   ): PaymentSessionApi = Retrofit.Builder()
     .client(okHttpClient)
     .baseUrl(Constants.API_SANDBOX_URL)
-    .addConverterFactory(factory)
-    .build()
-    .create(PaymentSessionApi::class.java)
-
-  @Singleton
-  @Provides
-  @Production
-  fun provideProdPaymentSessionApi(
-    okHttpClient: OkHttpClient,
-    factory: Converter.Factory,
-  ): PaymentSessionApi = Retrofit.Builder()
-    .client(okHttpClient)
-    .baseUrl(Constants.API_PRODUCTION_URL)
     .addConverterFactory(factory)
     .build()
     .create(PaymentSessionApi::class.java)
@@ -64,14 +49,6 @@ object ApiModule {
       ignoreUnknownKeys = true
     }
 
-    return json.asConverterFactory("application/json".toMediaType())
+    return json.asConverterFactory(Constants.CONTENT_TYPE_JSON.toMediaType())
   }
 }
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Production
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Sandbox

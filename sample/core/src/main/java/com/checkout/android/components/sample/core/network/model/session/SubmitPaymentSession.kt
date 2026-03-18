@@ -1,4 +1,4 @@
-package com.checkout.android.components.sample.core.session.request
+package com.checkout.android.components.sample.core.network.model.session
 
 import com.checkout.android.components.sample.core.model.PaymentItem
 import kotlinx.serialization.EncodeDefault

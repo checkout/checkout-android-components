@@ -1,4 +1,4 @@
-package com.checkout.android.components.sample.core.session.response
+package com.checkout.android.components.sample.core.network.model.session
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
