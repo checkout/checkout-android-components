@@ -8,7 +8,6 @@ object Constants {
 
   internal const val HEADER_CONTENT_TYPE = "Content-Type"
   internal const val HEADER_AUTHORIZATION = "Authorization"
-  internal const val HEADER_ID = "id"
 
   internal const val CONTENT_TYPE_JSON = "application/json"
 }

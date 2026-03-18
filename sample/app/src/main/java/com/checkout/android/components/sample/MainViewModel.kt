@@ -29,6 +29,7 @@ import com.checkout.components.interfaces.model.TokenizationResult
 import com.checkout.components.interfaces.model.UpdateDetails
 import com.checkout.components.wallet.WalletComponent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -63,7 +64,13 @@ class MainViewModel @Inject constructor(
         callbacks = buildComponentCallbacks(),
       )
 
-      val component = flowComponent.createComponents(config)
+      val component = try {
+        flowComponent.createComponents(config)
+      } catch (e: Exception) {
+        if (e is CancellationException) throw e
+
+        return@launch
+      }
 
       val rememberMeConfiguration = if (rememberMeSettings.value.enableRememberMe) {
         val rememberMeSettings = _rememberMeSettings.value
@@ -153,28 +160,44 @@ class MainViewModel @Inject constructor(
 
   fun onSubmit() {
     viewModelScope.launch {
-      (screenState.value as? PaymentComponentScreenState)?.paymentComponent?.submit()
+      (screenState.value as? PaymentComponentScreenState)?.run {
+        if (advancedSettings.value.customButtonType == PaymentButtonAction.PAYMENT) {
+          paymentComponent.submit()
+        } else {
+          paymentComponent.tokenize()
+        }
+      }
     }
   }
 
   fun onAmountChanged(amount: Int) {
-    viewModelScope.launch {
-      (screenState.value as? PaymentComponentScreenState)?.paymentComponent?.update(
-        UpdateDetails(amount = amount),
-      )
+    _screenState.update {
+      it.runIfPaymentComponentScreenState {
+        paymentComponent.update(UpdateDetails(amount = amount))
+        this@runIfPaymentComponentScreenState
+      }
     }
   }
 
   fun onCheckTermsAndConditions(value: Boolean) {
-    (screenState.value as? PaymentComponentScreenState)?.run {
-      _screenState.update { this.copy(termAndConditions = value) }
+    _screenState.update {
+      it.runIfPaymentComponentScreenState {
+        copy(termsAndConditionsAccepted = value)
+      }
     }
   }
 
   fun onDismissBottomSheet() {
     _screenState.update {
-      (it as PaymentComponentScreenState).copy(paymentResult = PaymentResultState())
+      it.runIfPaymentComponentScreenState {
+        copy(paymentResult = PaymentResultState())
+      }
     }
+  }
+
+  override fun onCleared() {
+    super.onCleared()
+    flowComponent.onCleared()
   }
 
   private fun buildComponentCallbacks(): ComponentCallback = ComponentCallback(
@@ -190,28 +213,28 @@ class MainViewModel @Inject constructor(
     onError = { paymentMethodComponent, error ->
       println("$paymentMethodComponent Error: $error")
       _screenState.update {
-        (it as PaymentComponentScreenState).copy(paymentResult = it.paymentResult.copy(error = error))
+        it.runIfPaymentComponentScreenState {
+          copy(paymentResult = paymentResult.copy(error = error))
+        }
       }
     },
     onSuccess = { paymentMethodComponent, paymentSessionResponse ->
       println("$paymentMethodComponent Success: $paymentSessionResponse")
 
       _screenState.update { state ->
-        if (state !is PaymentComponentScreenState) return@update state
+        state.runIfPaymentComponentScreenState {
+          val shouldShowNoToken =
+            paymentResult.token.isEmpty() && paymentMethodComponent is WalletComponent
+          val finalToken =
+            if (shouldShowNoToken) "no tokenization" else paymentResult.token
 
-        val currentPaymentResult = state.paymentResult
-
-        val shouldShowNoToken =
-          currentPaymentResult.token.isEmpty() && paymentMethodComponent is WalletComponent
-        val finalToken =
-          if (shouldShowNoToken) "no tokenization" else currentPaymentResult.token
-
-        state.copy(
-          paymentResult = currentPaymentResult.copy(
-            paymentId = paymentSessionResponse,
-            token = finalToken,
-          ),
-        )
+          copy(
+            paymentResult = paymentResult.copy(
+              paymentId = paymentSessionResponse,
+              token = finalToken,
+            ),
+          )
+        }
       }
     },
 
@@ -227,18 +250,21 @@ class MainViewModel @Inject constructor(
   private suspend fun onTokenize(tokenizeResult: TokenizationResult): CallbackResult {
     println("onTokenize: $tokenizeResult")
     _screenState.update { state ->
-      if (state !is PaymentComponentScreenState) return@update state
+      state.runIfPaymentComponentScreenState {
+        val advancedSettings = advancedSettings.value
 
-      val currentPaymentResult = state.paymentResult
-
-      val advancedSettings = advancedSettings.value
-
-      if (advancedSettings.paymentAction == PaymentButtonAction.TOKENIZE ||
-        (!advancedSettings.showCardPayButton && advancedSettings.customButtonType == PaymentButtonAction.TOKENIZE)
-      ) {
-        state.copy(paymentResult = currentPaymentResult.copy(token = tokenizeResult.data.token, paymentId = "Payment Action Tokenize"))
-      } else {
-        state.copy(paymentResult = currentPaymentResult.copy(token = tokenizeResult.data.token))
+        if (advancedSettings.paymentAction == PaymentButtonAction.TOKENIZE ||
+          (!advancedSettings.showCardPayButton && advancedSettings.customButtonType == PaymentButtonAction.TOKENIZE)
+        ) {
+          copy(
+            paymentResult = paymentResult.copy(
+              token = tokenizeResult.data.token,
+              paymentId = "Payment Action Tokenize",
+            ),
+          )
+        } else {
+          copy(paymentResult = paymentResult.copy(token = tokenizeResult.data.token))
+        }
       }
     }
     return CallbackResult.Accepted
@@ -254,11 +280,14 @@ class MainViewModel @Inject constructor(
   @Suppress("RedundantSuspendModifier") // handleTap callback is a suspend function, even if we are not have any suspended call
   private suspend fun handleTap(paymentMethodComponent: PaymentMethodComponent): Boolean {
     println("handleTap: ${paymentMethodComponent.name}")
-    return (screenState.value as? PaymentComponentScreenState)?.termAndConditions ?: false
+    return (screenState.value as? PaymentComponentScreenState)?.termsAndConditionsAccepted ?: false
   }
 
-  override fun onCleared() {
-    super.onCleared()
-    flowComponent.onCleared()
+  fun MainScreenState.runIfPaymentComponentScreenState(
+    block: PaymentComponentScreenState.() -> MainScreenState,
+  ): MainScreenState = if (this is PaymentComponentScreenState) {
+    block()
+  } else {
+    this
   }
 }

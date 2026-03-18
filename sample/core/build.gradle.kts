@@ -76,11 +76,6 @@ android {
     buildFeatures {
         buildConfig = true
     }
-    kotlin {
-        compilerOptions {
-            freeCompilerArgs.addAll("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
-        }
-    }
 }
 
 dependencies {

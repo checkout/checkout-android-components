@@ -21,7 +21,7 @@ object InitialScreenState : MainScreenState()
 data class PaymentComponentScreenState(
   val paymentComponent: PaymentMethodComponent,
   val showTermsAndConditions: Boolean = true,
-  val termAndConditions: Boolean = true,
+  val termsAndConditionsAccepted: Boolean = true,
   val addressConfiguration: SampleAddressConfiguration = SampleAddressConfiguration.Empty,
   val showAddressPrefill: Boolean = true,
   val prefillAddress: Boolean = true,

@@ -2,6 +2,16 @@
     <string name="app_name">CheckoutComponent Sample</string>
     <string name="show_flow">Show Flow</string>
 
+    <string name="label_error_complete">Complete error: %1$s</string>
+    <string name="label_generated_token">Generated Token: %1$s</string>
+    <string name="label_error_payment">Payment Error</string>
+    <string name="label_payment_successful">Payment Successful</string>
+    <string name="label_error_payment_id">Payment ID: %1$s</string>
+
+    <string name="label_button_close">Close</string>
+    <string name="label_update_amount">Update Amount</string>
+    <string name="label_button_submit">Submit</string>
+
     <!-- Settings Screen Labels -->
     <string name="label_component">Component:</string>
     <string name="label_with">with</string>
@@ -14,7 +24,6 @@
     <string name="label_advanced_features">Advanced Features</string>
     <string name="label_show_card_pay_button">Show card pay button</string>
     <string name="label_payment_button_action">Payment button action:</string>
-    <string name="label_show_google_pay_button">Show Google Pay button</string>
     <string name="label_display_cardholder_name">Display Cardholder Name:</string>
     <string name="label_card_accepted_schemes">Card accepted card schemes</string>
     <string name="label_google_pay_accepted_schemes">Google Pay accepted card schemes</string>
@@ -36,8 +45,5 @@
     <string name="label_rememberme_email">Email</string>
     <string name="label_rememberme_country_code">Country Code</string>
     <string name="label_rememberme_phone_number">Phone Number</string>
-    <string name="label_payment_error">Payment Error</string>
-    <string name="label_payment_successful">Payment Successful</string>
-    <string name="payment_id">Payment ID: %1$s</string>
 
 </resources>

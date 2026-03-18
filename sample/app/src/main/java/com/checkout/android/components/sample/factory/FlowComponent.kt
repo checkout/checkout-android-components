@@ -3,16 +3,13 @@ package com.checkout.android.components.sample.factory
 import android.content.Context
 import com.checkout.android.components.sample.core.BuildConfig
 import com.checkout.android.components.sample.core.network.model.session.PaymentSessions
+import com.checkout.android.components.sample.core.network.model.session.SubmitPaymentSession
 import com.checkout.android.components.sample.core.network.repository.PaymentSessionRepository
-import com.checkout.android.components.sample.core.session.request.SubmitPaymentSession
 import com.checkout.android.components.sample.extension.toDesignTokens
 import com.checkout.android.components.sample.extension.toPaymentSessionLocale
 import com.checkout.android.components.sample.ui.model.Components
-import com.checkout.android.components.sample.ui.model.Environment
 import com.checkout.android.components.sample.ui.model.PaymentMethods
 import com.checkout.android.components.sample.ui.model.Settings
-import com.checkout.android.components.sample.utils.toDesignTokens
-import com.checkout.android.components.sample.utils.toPaymentSessionLocale
 import com.checkout.components.core.CheckoutComponentsFactory
 import com.checkout.components.interfaces.Environment
 import com.checkout.components.interfaces.api.CheckoutComponents
@@ -73,7 +70,7 @@ class FlowComponent @Inject constructor(
 
     val paymentSession = PaymentSessions(
       enabledPaymentMethods = enablePaymentMethod(settings),
-      processingChannelID = processingChannelId,
+      processingChannelId = processingChannelId,
       locale = settings.psLocale.toPaymentSessionLocale(),
     )
 
@@ -173,15 +170,15 @@ class FlowComponent @Inject constructor(
     specificOptions = specificOptions,
   )
 
-    /**
-     * Submits the payment session data to the repository to finalize the payment process.
-     *
-     * @param sessionData The session data containing payment information to be submitted.
-     * @param settings The user-defined settings used to determine the environment.
-     * @param amount The transaction amount.
-     *
-     * @return An [ApiCallResult] indicating the outcome of the submission, including result details on success.
-     */
+  /**
+   * Submits the payment session data to the repository to finalize the payment process.
+   *
+   * @param sessionData The session data containing payment information to be submitted.
+   * @param settings The user-defined settings used to determine the environment.
+   * @param amount The transaction amount.
+   *
+   * @return An [ApiCallResult] indicating the outcome of the submission, including result details on success.
+   */
   suspend fun handleSubmit(
     sessionData: String,
     settings: Settings,
@@ -211,13 +208,13 @@ class FlowComponent @Inject constructor(
     )
   }
 
-    /**
-     * Cleans up the checkout component instance when the component is no longer needed.
-     *
-     * This function should be called when the hosting activity or view model is destroyed to ensure
-     * proper resource cleanup and prevent memory leaks. It clears the internal reference to the
-     * [CheckoutComponents] instance.
-     */
+  /**
+   * Cleans up the checkout component instance when the component is no longer needed.
+   *
+   * This function should be called when the hosting activity or view model is destroyed to ensure
+   * proper resource cleanup and prevent memory leaks. It clears the internal reference to the
+   * [CheckoutComponents] instance.
+   */
   fun onCleared() {
     checkoutComponent = null
     paymentSessionId = null

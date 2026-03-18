@@ -5,13 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,7 +36,7 @@ class MainActivity : ComponentActivity() {
           val settingState by viewModel.settingState.collectAsStateWithLifecycle()
 
           val advancedSettingsState by viewModel.advancedSettings.collectAsStateWithLifecycle()
-            val rememberMeSettings by viewModel.rememberMeSettings.collectAsStateWithLifecycle()
+          val rememberMeSettings by viewModel.rememberMeSettings.collectAsStateWithLifecycle()
 
           val context = LocalContext.current
 
@@ -49,14 +47,14 @@ class MainActivity : ComponentActivity() {
             screenState = state,
             settingState = settingState,
             advancedSettingsState = advancedSettingsState,
-              rememberMeSettings = rememberMeSettings,
+            rememberMeSettings = rememberMeSettings,
 
-              showSettings = viewModel::showSettings,
+            showSettings = viewModel::showSettings,
             showFlowComponent = { viewModel.showFlowComponent(context) },
             updateSettings = viewModel::updateSettings,
             updateAdvancedSettings = viewModel::updateAdvancedSettings,
-              updateRememberMeSettings = viewModel::updateRememberMeSettings,
-              onSubmitClicked = viewModel::onSubmit,
+            updateRememberMeSettings = viewModel::updateRememberMeSettings,
+            onSubmitClicked = viewModel::onSubmit,
             onAmountChanged = viewModel::onAmountChanged,
             onCheckTermsAndConditions = viewModel::onCheckTermsAndConditions,
             onDismissBottomSheet = viewModel::onDismissBottomSheet,

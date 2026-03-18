@@ -2,26 +2,16 @@ package com.checkout.android.components.sample.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -29,10 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,83 +33,15 @@ import com.checkout.components.interfaces.model.ComponentName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * A bottom sheet that displays the result for a payment flow.
+ *
+ * @param paymentResult The state containing the result of the payment process, including success details or error information.
+ * @param modifier The [Modifier] to be applied to the bottom sheet layout.
+ * @param onDismiss Callback invoked when the bottom sheet is dismissed or the close button is clicked.
+ */
 @Composable
-fun AmountPanel(
-  modifier: Modifier = Modifier,
-  state: TextFieldState = rememberTextFieldState(),
-  onAmountChanged: (Int) -> Unit = {},
-) {
-  Row(
-    modifier = modifier
-      .padding(horizontal = 8.dp)
-      .fillMaxWidth(),
-    verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = Arrangement.spacedBy(8.dp),
-  ) {
-    val focusManager = LocalFocusManager.current
-
-    val updateAmount = {
-      runCatching {
-        state.text.toString().toInt()
-      }.onSuccess {
-        onAmountChanged(it)
-        state.clearText()
-      }.onFailure {
-        state.clearText()
-      }
-    }
-
-    OutlinedTextField(
-      modifier = Modifier.weight(1f),
-      state = state,
-      label = { Text("$") },
-      lineLimits = TextFieldLineLimits.SingleLine,
-      keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-      onKeyboardAction = {
-        updateAmount()
-        focusManager.clearFocus()
-      },
-    )
-
-    OutlinedButton(
-      modifier = Modifier,
-      onClick = {
-        updateAmount()
-        focusManager.clearFocus()
-      },
-    ) {
-      Text("Update Amount")
-    }
-  }
-}
-
-@Composable
-fun ValidatePayment(
-  modifier: Modifier = Modifier,
-  checked: Boolean = true,
-  onCheckedChange: (Boolean) -> Unit = {},
-) {
-  Row(
-    modifier = modifier,
-    horizontalArrangement = Arrangement.Start,
-    verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Checkbox(
-      checked = checked,
-      onCheckedChange = { isChecked ->
-        onCheckedChange(isChecked)
-      },
-    )
-    Text(
-      text = stringResource(R.string.term_condition_text),
-      color = if (!checked) Color.Red else Color.Black,
-    )
-  }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BottomSheetResult(
+fun FlowFeedbackBottomSheet(
   paymentResult: PaymentResultState,
   modifier: Modifier = Modifier,
   onDismiss: () -> Unit = {},
@@ -159,7 +78,7 @@ fun BottomSheetResult(
           }
         },
       ) {
-        Text("Close")
+        Text(stringResource(R.string.label_button_close))
       }
     }
   }
@@ -192,14 +111,14 @@ fun SuccessBottomSheetBody(
 
     Text(
       modifier = Modifier.fillMaxWidth(),
-      text = stringResource(R.string.payment_id, paymentResultState.paymentId),
+      text = stringResource(R.string.label_error_payment_id, paymentResultState.paymentId),
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.bodyLarge,
     )
 
     Text(
       modifier = Modifier.fillMaxWidth(),
-      text = "Generated Token: ${paymentResultState.token}",
+      text = stringResource(R.string.label_generated_token, paymentResultState.token),
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.bodyLarge,
     )
@@ -225,7 +144,7 @@ fun ErrorBottomSheetBody(
 
     Text(
       modifier = Modifier.fillMaxWidth(),
-      text = stringResource(R.string.label_payment_error),
+      text = stringResource(R.string.label_error_payment),
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.displayLarge,
     )
@@ -239,38 +158,36 @@ fun ErrorBottomSheetBody(
 
     Text(
       modifier = Modifier.fillMaxWidth(),
-      text = stringResource(R.string.payment_id, error.details.paymentSessionId),
+      text = stringResource(R.string.label_error_payment_id, error.details.paymentSessionId),
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.bodyLarge,
     )
 
     Text(
       modifier = Modifier.fillMaxWidth(),
-      text = "Complete error: $error",
+      text = stringResource(R.string.label_error_complete, error),
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.bodyLarge,
     )
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-private fun BottomSheetSuccessResultPreview() {
+private fun FlowFeedbackBottomSheetSuccessPreview() {
   CheckoutComponentSampleTheme {
-    BottomSheetResult(
+    FlowFeedbackBottomSheet(
       modifier = Modifier,
-      paymentResult = PaymentResultState("123456789", "123456789"),
+      paymentResult = PaymentResultState("payment_id", "token"),
     )
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-private fun BottomSheetErrorResultPreview() {
+private fun FlowFeedbackBottomSheetErrorPreview() {
   CheckoutComponentSampleTheme {
-    BottomSheetResult(
+    FlowFeedbackBottomSheet(
       modifier = Modifier,
       paymentResult = PaymentResultState(
         error = CheckoutError.PaymentMethod(
@@ -278,27 +195,11 @@ private fun BottomSheetErrorResultPreview() {
           CheckoutErrorCode.PAYMENT_REQUEST_DECLINED,
           CheckoutErrorDetails.PaymentMethod(
             "session",
-            "payment_sessiont_id",
+            "payment_session_id",
             ComponentName.Flow,
           ),
         ),
       ),
     )
-  }
-}
-
-@Preview
-@Composable
-private fun AmountPanelPreview() {
-  CheckoutComponentSampleTheme {
-    AmountPanel()
-  }
-}
-
-@Preview
-@Composable
-private fun ValidatePaymentPreview() {
-  CheckoutComponentSampleTheme {
-    ValidatePayment()
   }
 }

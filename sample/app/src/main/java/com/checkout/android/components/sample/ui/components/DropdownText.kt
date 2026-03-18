@@ -30,7 +30,11 @@ fun DropdownText(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier.clickable(onClick = onClick),
   ) {
-    Text(text = text, color = MaterialTheme.colorScheme.primary, fontSize = LABEL_FONT_SIZE)
+    Text(
+      text = text,
+      color = MaterialTheme.colorScheme.primary,
+      style = MaterialTheme.typography.bodyLarge,
+    )
     Icon(
       imageVector = Icons.Default.ArrowDropDown,
       tint = MaterialTheme.colorScheme.primary,
