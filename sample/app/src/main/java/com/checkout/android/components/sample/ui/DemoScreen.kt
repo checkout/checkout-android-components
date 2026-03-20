@@ -47,7 +47,7 @@ fun DemoScreen(
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    InitialComponent(
+    FlowActionHeader(
       modifier = Modifier.fillMaxWidth(),
       onSettingsClicked = showSettings,
       onFlowClicked = showFlowComponent,
@@ -67,13 +67,13 @@ fun DemoScreen(
         )
       }
 
-      else -> {}
+      else -> Unit
     }
   }
 }
 
 @Composable
-fun InitialComponent(
+fun FlowActionHeader(
   modifier: Modifier = Modifier,
   onSettingsClicked: () -> Unit = {},
   onFlowClicked: () -> Unit = {},
@@ -84,8 +84,6 @@ fun InitialComponent(
     horizontalArrangement = Arrangement.Center,
   ) {
     Button(
-      modifier = Modifier
-        .heightIn(min = 56.dp),
       onClick = onFlowClicked,
       shape = MaterialTheme.shapes.extraLarge.copy(all = CornerSize(2.dp)),
       colors = ButtonColors(
@@ -103,8 +101,6 @@ fun InitialComponent(
     }
 
     IconButton(
-      modifier = Modifier
-        .heightIn(min = 56.dp),
       onClick = onSettingsClicked,
     ) {
       Icon(imageVector = Icons.Default.Settings, contentDescription = null)

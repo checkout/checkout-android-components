@@ -54,9 +54,14 @@ class FlowComponent @Inject constructor(
       Environment.PRODUCTION -> BuildConfig.PRODUCTION_PUBLIC_KEY
     }
 
+    val processingChannelId = when (settings.environment) {
+      Environment.SANDBOX -> BuildConfig.SANDBOX_PROCESSING_CHANNEL_ID
+      Environment.PRODUCTION -> BuildConfig.PRODUCTION_PROCESSING_CHANNEL_ID.ifEmpty { null }
+    }
+
     val paymentSession = PaymentSessions(
       enabledPaymentMethods = enablePaymentMethod(settings),
-      processingChannelID = if (settings.environment == Environment.SANDBOX) BuildConfig.SANDBOX_PROCESSING_CHANNEL_ID else null,
+      processingChannelID = processingChannelId,
       locale = settings.psLocale.toPaymentSessionLocale(),
     )
 

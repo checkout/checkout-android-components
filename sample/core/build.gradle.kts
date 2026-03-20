@@ -49,6 +49,13 @@ android {
                 "PRODUCTION_SECRET_KEY",
                 this["production.components.secret_key"].toString(),
             )
+
+            buildConfigField(
+                "String",
+                "PRODUCTION_PROCESSING_CHANNEL_ID",
+                // Default to empty string if the property is not set
+                getOrDefault("production.components.processing_channel_id", "\"\"").toString(),
+            )
         }
     }
 
