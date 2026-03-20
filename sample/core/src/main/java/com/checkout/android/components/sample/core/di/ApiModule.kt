@@ -45,6 +45,7 @@ object ApiModule {
   @Provides
   fun providesJson(): Converter.Factory {
     val json = Json {
+      isLenient = true
       encodeDefaults = true
       ignoreUnknownKeys = true
     }

@@ -2,8 +2,6 @@ package com.checkout.android.components.sample.core
 
 object Constants {
 
-  private var isSandbox: Boolean = true
-
   internal const val API_SANDBOX_URL = "https://api.sandbox.checkout.com/"
 
   internal const val API_PRODUCTION_URL = "https://api.checkout.com/"
