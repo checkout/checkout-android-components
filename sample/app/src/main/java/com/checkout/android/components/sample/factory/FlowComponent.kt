@@ -3,6 +3,7 @@ package com.checkout.android.components.sample.factory
 import android.content.Context
 import com.checkout.android.components.sample.core.BuildConfig
 import com.checkout.android.components.sample.core.network.model.session.PaymentSessions
+import com.checkout.android.components.sample.core.network.model.session.SubmitPaymentSession
 import com.checkout.android.components.sample.core.network.repository.PaymentSessionRepository
 import com.checkout.android.components.sample.extension.toDesignTokens
 import com.checkout.android.components.sample.extension.toPaymentSessionLocale
@@ -14,10 +15,13 @@ import com.checkout.components.interfaces.Environment
 import com.checkout.components.interfaces.api.CheckoutComponents
 import com.checkout.components.interfaces.api.PaymentMethodComponent
 import com.checkout.components.interfaces.component.CheckoutComponentConfiguration
+import com.checkout.components.interfaces.component.ComponentCallback
 import com.checkout.components.interfaces.component.ComponentOption
+import com.checkout.components.interfaces.model.ApiCallResult
 import com.checkout.components.interfaces.model.ComponentName
 import com.checkout.components.interfaces.model.PaymentMethodName
 import com.checkout.components.interfaces.model.PaymentSessionResponse
+import com.checkout.components.interfaces.model.paymentsession.PaymentSessionSubmissionResult
 import com.checkout.components.wallet.wrapper.GooglePayFlowCoordinator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -38,16 +42,21 @@ class FlowComponent @Inject constructor(
 ) {
 
   private var checkoutComponent: CheckoutComponents? = null
+  private var paymentSessionId: String? = null
 
   /**
    * Builds a [CheckoutComponentConfiguration] used to initialize checkout components for all payments relevant components.
    *
    * @param context The application context.
    * @param settings The user-defined settings for the checkout components.
-   **/
+   * @param callbacks The component callbacks to be used for handling component events.
+   *
+   * @return A [CheckoutComponentConfiguration] initialized with the provided settings and session data.
+   */
   suspend fun createConfigurationFromSettings(
     context: Context,
-    settings: Settings,
+    settings: Settings = Settings(),
+    callbacks: ComponentCallback,
   ): CheckoutComponentConfiguration {
     val publicKey = when (settings.environment) {
       Environment.SANDBOX -> BuildConfig.SANDBOX_PUBLIC_KEY
@@ -61,14 +70,15 @@ class FlowComponent @Inject constructor(
 
     val paymentSession = PaymentSessions(
       enabledPaymentMethods = enablePaymentMethod(settings),
-      processingChannelID = processingChannelId,
+      processingChannelId = processingChannelId,
       locale = settings.psLocale.toPaymentSessionLocale(),
     )
 
     val response = repository.createPaymentSession(
       environment = settings.environment,
       paymentSessions = paymentSession,
-    )
+    ).also { paymentSessionId = it.id }
+
     val flowCoordinator = createGooglePlayFlowCoordinator(context, settings)?.let {
       mapOf(PaymentMethodName.GooglePay to it)
     } ?: mapOf()
@@ -84,6 +94,7 @@ class FlowComponent @Inject constructor(
       flowCoordinators = flowCoordinator,
       locale = settings.locale,
       appearance = settings.appearance.toDesignTokens(),
+      componentCallback = callbacks,
     )
   }
 
@@ -124,6 +135,8 @@ class FlowComponent @Inject constructor(
    * @see CheckoutComponents.create
    * @see ComponentName.Flow
    * @see ComponentOption
+   *
+   * @return A [PaymentMethodComponent] configured for [ComponentName.Flow].
    */
   fun createFlowPaymentMethodComponent(
     checkoutComponents: CheckoutComponents,
@@ -146,6 +159,8 @@ class FlowComponent @Inject constructor(
    * @see CheckoutComponents.create
    * @see PaymentMethodName.Card
    * @see ComponentOption
+   *
+   * @return A [PaymentMethodComponent] configured for [PaymentMethodName.Card].
    */
   fun createCardPaymentMethodComponent(
     checkoutComponents: CheckoutComponents,
@@ -156,6 +171,44 @@ class FlowComponent @Inject constructor(
   )
 
   /**
+   * Submits the payment session data to the repository to finalize the payment process.
+   *
+   * @param sessionData The session data containing payment information to be submitted.
+   * @param settings The user-defined settings used to determine the environment.
+   * @param amount The transaction amount.
+   *
+   * @return An [ApiCallResult] indicating the outcome of the submission, including result details on success.
+   */
+  suspend fun handleSubmit(
+    sessionData: String,
+    settings: Settings,
+    amount: Int = 99999,
+  ): ApiCallResult {
+    val paymentSessionId = this.paymentSessionId ?: return ApiCallResult.Failure
+
+    val response = repository.submitPaymentSession(
+      environment = settings.environment,
+      submitPaymentSession = SubmitPaymentSession(
+        sessionData = sessionData,
+        amount = amount,
+      ),
+      paymentSessionId = paymentSessionId,
+    )
+
+    if (response.error != null) return ApiCallResult.Failure
+
+    return ApiCallResult.Success(
+      PaymentSessionSubmissionResult(
+        id = response.id,
+        type = response.type,
+        status = response.status,
+        action = response.action,
+        declineReason = response.declineReason,
+      ),
+    )
+  }
+
+  /**
    * Cleans up the checkout component instance when the component is no longer needed.
    *
    * This function should be called when the hosting activity or view model is destroyed to ensure
@@ -164,24 +217,29 @@ class FlowComponent @Inject constructor(
    */
   fun onCleared() {
     checkoutComponent = null
+    paymentSessionId = null
   }
 
   private fun createGooglePlayFlowCoordinator(
     context: Context,
     settings: Settings,
-  ): GooglePayFlowCoordinator? = if (settings.component == Components.GooglePay ||
-    (settings.component == Components.Flow && settings.paymentMethods.contains(PaymentMethods.GooglePay))
-  ) {
-    GooglePayFlowCoordinator(
-      context = context,
-      handleActivityResult = ::handleActivityResult,
-    )
-  } else {
-    null
+  ): GooglePayFlowCoordinator? {
+    val isGooglePayComponent = settings.component == Components.GooglePay
+    val isFlowWithGooglePay = settings.component == Components.Flow &&
+      PaymentMethods.GooglePay in settings.paymentMethods
+
+    return if (isGooglePayComponent || isFlowWithGooglePay) {
+      GooglePayFlowCoordinator(
+        context = context,
+        handleActivityResult = ::handleActivityResult,
+      )
+    } else {
+      null
+    }
   }
 
   private fun enablePaymentMethod(settings: Settings): List<String> = if (settings.component == Components.Flow) {
-    settings.paymentMethods.toList().map { it.name.lowercase() }
+    settings.paymentMethods.map { it.name.lowercase() }
   } else {
     listOf(settings.component.name.lowercase())
   }

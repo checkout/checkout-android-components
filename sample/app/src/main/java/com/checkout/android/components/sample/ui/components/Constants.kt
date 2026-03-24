@@ -22,6 +22,12 @@ internal val ELEMENT_SPACING = 8.dp
 /** Small vertical padding used in switch rows. */
 internal val SWITCH_ROW_PADDING = 4.dp
 
+/** Standard horizontal arrangement space by. */
+internal val HORIZONTAL_ARRANGEMENT = 12.dp
+
+/** Standard lazy column paddings */
+internal val LAZY_COLUMN_PADDING = 24.dp
+
 // ============================================================================
 // Font Size Constants
 // ============================================================================

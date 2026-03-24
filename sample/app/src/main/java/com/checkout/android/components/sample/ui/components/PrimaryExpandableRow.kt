@@ -16,9 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -36,18 +33,19 @@ import androidx.compose.ui.draw.rotate
 @Composable
 fun PrimaryExpandableRow(
   label: String,
-  initiallyExpanded: Boolean = false,
+  modifier: Modifier = Modifier,
+  isExpanded: Boolean = false,
+  onExpanded: (Boolean) -> Unit = {},
   content: @Composable () -> Unit,
 ) {
-  var isExpanded by remember { mutableStateOf(initiallyExpanded) }
   val rotationState by animateFloatAsState(
     targetValue = if (isExpanded) 180f else 0f,
     label = "Arrow Rotation",
   )
 
-  Column(modifier = Modifier.fillMaxWidth()) {
+  Column(modifier = modifier.fillMaxWidth()) {
     TextButton(
-      onClick = { isExpanded = !isExpanded },
+      onClick = { onExpanded(!isExpanded) },
       colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary),
     ) {
       Row(
@@ -57,7 +55,7 @@ fun PrimaryExpandableRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
       ) {
-        Text(text = label, fontSize = LABEL_FONT_SIZE)
+        Text(text = label, style = MaterialTheme.typography.bodyLarge)
         Icon(
           imageVector = Icons.Default.KeyboardArrowDown,
           contentDescription = "Expand",

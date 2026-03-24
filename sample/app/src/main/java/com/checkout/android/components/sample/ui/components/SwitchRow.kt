@@ -29,7 +29,7 @@ fun SwitchRow(label: String, isChecked: Boolean, onCheckedChange: (Boolean) -> U
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
   ) {
-    Text(text = label, fontSize = LABEL_FONT_SIZE)
+    Text(text = label, style = MaterialTheme.typography.bodyLarge)
     Switch(
       checked = isChecked,
       onCheckedChange = onCheckedChange,

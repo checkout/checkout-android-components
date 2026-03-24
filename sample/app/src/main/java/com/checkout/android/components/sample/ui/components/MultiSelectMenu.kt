@@ -51,7 +51,7 @@ fun <T> MultiSelectMenu(
       Text(
         text = displayText,
         color = MaterialTheme.colorScheme.primary,
-        fontSize = LABEL_FONT_SIZE,
+        style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center,
       )
     }

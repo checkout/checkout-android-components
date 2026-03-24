@@ -1,5 +1,6 @@
 package com.checkout.android.components.sample.core.di
 
+import com.checkout.android.components.sample.core.BuildConfig
 import com.checkout.android.components.sample.core.Constants
 import com.checkout.android.components.sample.core.api.PaymentSessionApi
 import dagger.Module
@@ -36,7 +37,7 @@ object ApiModule {
   fun providesOkhttpClient(): OkHttpClient = OkHttpClient.Builder()
     .addInterceptor(
       HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
       },
     )
     .build()

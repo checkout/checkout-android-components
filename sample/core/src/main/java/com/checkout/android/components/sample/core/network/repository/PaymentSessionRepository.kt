@@ -76,7 +76,6 @@ class PaymentSessionRepository @Inject constructor(
       paymentSessionApi.postSubmitPaymentSession(
         url = baseUrl,
         token = getToken(environment),
-        paymentSessionId = paymentSessionId,
         body = submitPaymentSession,
       )
     }

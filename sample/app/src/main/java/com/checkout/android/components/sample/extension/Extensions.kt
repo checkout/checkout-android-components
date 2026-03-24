@@ -25,6 +25,8 @@ import com.checkout.components.interfaces.localisation.Locale.Vi
 import com.checkout.components.interfaces.localisation.Locale.Zh
 import com.checkout.components.interfaces.localisation.Locale.ZhHk
 import com.checkout.components.interfaces.localisation.Locale.ZhTw
+import com.checkout.components.interfaces.model.CardSchemeName
+import com.checkout.components.interfaces.model.CardTypeName
 import com.checkout.components.interfaces.uicustomisation.designtoken.ColorTokens
 import com.checkout.components.interfaces.uicustomisation.designtoken.DefaultBorderRadius
 import com.checkout.components.interfaces.uicustomisation.designtoken.DefaultFonts
@@ -99,3 +101,34 @@ fun Locale?.toPaymentSessionLocale(): String? = when (this) {
   ZhTw -> "zh-TW"
   is Locale.Customised, null -> null
 }
+
+/**
+ * Toggles the presence of an item in the list.
+ *
+ * If the item is already present, it returns a new list with the item removed.
+ * If the item is not present, it returns a new list with the item added.
+ *
+ * @param item The element to be added or removed.
+ * @return A new [List] containing the updated elements.
+ */
+fun <T> List<T>.addOrRemove(item: T): List<T> {
+  if (contains(item)) {
+    return this - item
+  } else {
+    return this + item
+  }
+}
+
+/**
+ * Retrieves a display-friendly name for the [CardTypeName] based on its class name.
+ *
+ * @return The simple name of the underlying Java class.
+ */
+fun CardTypeName.displayName(): String = this::class.java.simpleName
+
+/**
+ * Retrieves a display-friendly name for the [CardSchemeName] based on its class name.
+ *
+ * @return The simple name of the underlying Java class.
+ */
+fun CardSchemeName.displayName(): String = this::class.java.simpleName
