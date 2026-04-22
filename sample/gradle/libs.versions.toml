@@ -18,7 +18,7 @@ ksp = "2.3.4"
 coroutinesCore = "1.10.2"
 kotlinSerialization = "1.10.0"
 
-checkoutAndroidComponents = "1.6.0"
+checkoutAndroidComponents = "1.9.0"
 appcompat = "1.7.1"
 material = "1.13.0"
 
