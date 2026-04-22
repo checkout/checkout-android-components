@@ -20,6 +20,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +44,7 @@ import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.SettingScreenState
 import com.checkout.android.components.sample.ui.model.Settings
 import com.checkout.android.components.sample.ui.theme.CheckoutComponentSampleTheme
+import com.checkout.components.interfaces.api.PaymentMethodComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,9 +80,10 @@ fun DemoScreen(
 
       when (screenState) {
         is PaymentComponentScreenState -> {
-          Box(modifier = Modifier.weight(1f)) {
-            screenState.paymentComponent.Render()
-          }
+          RenderComponent(
+            modifier = Modifier.weight(1f),
+            paymentComponent = screenState.paymentComponent,
+          )
         }
 
         is SettingScreenState -> {
@@ -125,6 +132,23 @@ fun DemoScreen(
           onDismiss = onDismissBottomSheet,
         )
       }
+    }
+  }
+}
+
+@Composable
+private fun RenderComponent(
+  paymentComponent: PaymentMethodComponent,
+  modifier: Modifier = Modifier,
+) {
+  var isAvailable by remember { mutableStateOf(false) }
+  LaunchedEffect(paymentComponent) {
+    isAvailable = paymentComponent.isAvailable()
+  }
+
+  if (isAvailable) {
+    Box(modifier = modifier) {
+      paymentComponent.Render()
     }
   }
 }
