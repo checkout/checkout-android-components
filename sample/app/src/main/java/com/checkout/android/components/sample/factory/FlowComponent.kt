@@ -171,6 +171,30 @@ class FlowComponent @Inject constructor(
   )
 
   /**
+   * Creates a [PaymentMethodComponent] specifically for the Google Pay payment method component.
+   *
+   * @param checkoutComponents The [CheckoutComponents] instance used to initialize the component.
+   *                          This should be a previously created instance from [createComponents].
+   * @param specificOptions Optional component-specific configuration options. If not provided,
+   *                       default options will be used. Can be used to customize Google Pay component behavior,
+   *                       such as card validation rules, appearance, or input requirements.
+   * @return A [PaymentMethodComponent] configured for [PaymentMethodName.GooglePay]
+   *
+   * @see CheckoutComponents.create
+   * @see PaymentMethodName.GooglePay
+   * @see ComponentOption
+   *
+   * @return A [PaymentMethodComponent] configured for [PaymentMethodName.GooglePay].
+   */
+  fun createGooglePayPaymentMethodComponent(
+    checkoutComponents: CheckoutComponents,
+    specificOptions: ComponentOption? = null,
+  ): PaymentMethodComponent = checkoutComponents.create(
+    componentName = PaymentMethodName.GooglePay,
+    specificOptions = specificOptions,
+  )
+
+  /**
    * Submits the payment session data to the repository to finalize the payment process.
    *
    * @param sessionData The session data containing payment information to be submitted.

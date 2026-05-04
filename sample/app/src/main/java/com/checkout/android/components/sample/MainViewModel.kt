@@ -123,7 +123,7 @@ class MainViewModel @Inject constructor(
           specificOptions,
         )
 
-        Components.GooglePay -> flowComponent.createFlowPaymentMethodComponent(
+        Components.GooglePay -> flowComponent.createGooglePayPaymentMethodComponent(
           component,
           specificOptions,
         )
