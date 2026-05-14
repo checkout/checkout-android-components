@@ -441,7 +441,7 @@ production.components.processing_channel_id=your_key_here
 
 **Solution**: Ensure the library is properly published. Check `libs.versions.toml` for correct version:
 ```toml
-checkoutAndroidComponents = "1.6.0"
+checkoutAndroidComponents = "1.12.0"
 ```
 
 ---
