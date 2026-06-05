@@ -52,7 +52,6 @@
     <string name="label_ps_configuration">Payment Session Configurations</string>
     <string name="label_ps_customer_name">Customer Name</string>
     <string name="label_ps_customer_email">Customer Email</string>
-    <string name="label_ps_email">Email</string>
     <string name="label_ps_country_code">Country Code</string>
     <string name="label_ps_phone_number">Phone Number</string>
 

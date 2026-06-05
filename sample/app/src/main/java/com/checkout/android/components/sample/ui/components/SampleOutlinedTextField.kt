@@ -58,6 +58,7 @@ fun SampleOutlineTextField(
     ),
     lineLimits = TextFieldLineLimits.SingleLine,
     onKeyboardAction = KeyboardActionHandler {
+      currentOnDone(state.text.toString())
       keyboardController?.hide()
     },
     inputTransformation = inputTransformation,
