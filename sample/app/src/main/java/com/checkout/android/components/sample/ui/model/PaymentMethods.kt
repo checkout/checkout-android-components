@@ -9,4 +9,6 @@ package com.checkout.android.components.sample.ui.model
 enum class PaymentMethods {
   Card,
   GooglePay,
+  Tamara,
+  Tabby,
 }

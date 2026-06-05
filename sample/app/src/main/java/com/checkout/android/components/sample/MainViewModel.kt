@@ -10,6 +10,7 @@ import com.checkout.android.components.sample.ui.model.InitialScreenState
 import com.checkout.android.components.sample.ui.model.MainScreenState
 import com.checkout.android.components.sample.ui.model.PaymentComponentScreenState
 import com.checkout.android.components.sample.ui.model.PaymentResultState
+import com.checkout.android.components.sample.ui.model.PaymentSessionConfiguration
 import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.SettingScreenState
 import com.checkout.android.components.sample.ui.model.Settings
@@ -47,6 +48,8 @@ class MainViewModel @Inject constructor(
   private val _advancedSettings = MutableStateFlow(AdvancedSettings())
   private val _rememberMeSettings = MutableStateFlow(RememberMeSettings())
 
+  private val _paymentSessionConfiguration = MutableStateFlow(PaymentSessionConfiguration())
+
   val screenState = _screenState.asStateFlow()
 
   val settingState = _settingState.asStateFlow()
@@ -55,12 +58,15 @@ class MainViewModel @Inject constructor(
 
   val rememberMeSettings = _rememberMeSettings.asStateFlow()
 
+  val paymentSessionConfiguration = _paymentSessionConfiguration.asStateFlow()
+
   fun showFlowComponent(context: Context) {
     viewModelScope.launch {
       val advancedSettings = advancedSettings.value
       val config = flowComponent.createConfigurationFromSettings(
         context = context,
         settings = settingState.value,
+        paymentSessionConfiguration = paymentSessionConfiguration.value,
         callbacks = buildComponentCallbacks(),
       )
 
@@ -155,6 +161,12 @@ class MainViewModel @Inject constructor(
   fun updateRememberMeSettings(rememberMeSettings: RememberMeSettings) {
     _rememberMeSettings.update {
       rememberMeSettings
+    }
+  }
+
+  fun updatePaymentSessionConfiguration(paymentSessionConfiguration: PaymentSessionConfiguration) {
+    _paymentSessionConfiguration.update {
+      paymentSessionConfiguration
     }
   }
 

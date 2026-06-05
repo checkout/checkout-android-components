@@ -38,6 +38,8 @@ class MainActivity : ComponentActivity() {
           val advancedSettingsState by viewModel.advancedSettings.collectAsStateWithLifecycle()
           val rememberMeSettings by viewModel.rememberMeSettings.collectAsStateWithLifecycle()
 
+          val paymentSessionConfiguration by viewModel.paymentSessionConfiguration.collectAsStateWithLifecycle()
+
           val context = LocalContext.current
 
           DemoScreen(
@@ -48,12 +50,13 @@ class MainActivity : ComponentActivity() {
             settingState = settingState,
             advancedSettingsState = advancedSettingsState,
             rememberMeSettings = rememberMeSettings,
-
+            paymentSessionConfiguration = paymentSessionConfiguration,
             showSettings = viewModel::showSettings,
             showFlowComponent = { viewModel.showFlowComponent(context) },
             updateSettings = viewModel::updateSettings,
             updateAdvancedSettings = viewModel::updateAdvancedSettings,
             updateRememberMeSettings = viewModel::updateRememberMeSettings,
+            updatePaymentSessionConfiguration = viewModel::updatePaymentSessionConfiguration,
             onSubmitClicked = viewModel::onSubmit,
             onAmountChanged = viewModel::onAmountChanged,
             onCheckTermsAndConditions = viewModel::onCheckTermsAndConditions,

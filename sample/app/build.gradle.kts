@@ -61,6 +61,7 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(libs.checkout.android.components)
+    implementation(libs.checkout.android.components.payment.methods.redirect)
 
     testImplementation(libs.junit)
 

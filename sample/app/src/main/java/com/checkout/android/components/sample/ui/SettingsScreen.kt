@@ -27,6 +27,7 @@ import com.checkout.android.components.sample.ui.components.PrimaryExpandableRow
 import com.checkout.android.components.sample.ui.components.ROW_VERTICAL_PADDING
 import com.checkout.android.components.sample.ui.components.SampleEmailOutlinedTextField
 import com.checkout.android.components.sample.ui.components.SampleNumberOutlinedTextField
+import com.checkout.android.components.sample.ui.components.SampleTextOutlinedTextField
 import com.checkout.android.components.sample.ui.components.SecondaryDropdownRow
 import com.checkout.android.components.sample.ui.components.SecondaryExpandableRow
 import com.checkout.android.components.sample.ui.components.SingleSelectMenu
@@ -40,12 +41,15 @@ import com.checkout.android.components.sample.ui.model.CardTypesList
 import com.checkout.android.components.sample.ui.model.CardholderPositionList
 import com.checkout.android.components.sample.ui.model.ComponentList
 import com.checkout.android.components.sample.ui.model.Components
+import com.checkout.android.components.sample.ui.model.CountryList
+import com.checkout.android.components.sample.ui.model.CurrencyList
 import com.checkout.android.components.sample.ui.model.EnvironmentList
 import com.checkout.android.components.sample.ui.model.GooglePayCardSchemeList
 import com.checkout.android.components.sample.ui.model.GooglePayCardTypesList
 import com.checkout.android.components.sample.ui.model.Localizations
 import com.checkout.android.components.sample.ui.model.PaymentActionList
 import com.checkout.android.components.sample.ui.model.PaymentMethodsList
+import com.checkout.android.components.sample.ui.model.PaymentSessionConfiguration
 import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.Settings
 import com.checkout.android.components.sample.ui.model.SubmitPaymentHandler
@@ -57,9 +61,11 @@ fun SettingsScreen(
   settings: Settings,
   advancedSettings: AdvancedSettings,
   rememberMeSettings: RememberMeSettings,
+  paymentSessionConfiguration: PaymentSessionConfiguration,
   onUpdated: (Settings) -> Unit,
   onUpdateAdvancedSettings: (AdvancedSettings) -> Unit,
   onUpdateRememberMeSettings: (RememberMeSettings) -> Unit,
+  onUpdatePaymentSessionConfiguration: (PaymentSessionConfiguration) -> Unit,
   modifier: Modifier = Modifier,
 ) {
   LazyColumn(
@@ -75,6 +81,13 @@ fun SettingsScreen(
       AdvancedSettingsContent(
         advancedSettings = advancedSettings,
         onUpdated = onUpdateAdvancedSettings,
+      )
+    }
+
+    item {
+      PaymentSessionConfiguration(
+        paymentSessionConfiguration = paymentSessionConfiguration,
+        onUpdated = onUpdatePaymentSessionConfiguration,
       )
     }
 
@@ -158,6 +171,19 @@ fun BasicSettingsContent(
       Localizations,
       settings.psLocale,
     ) { localeSelection -> onUpdated(settings.copy(psLocale = localeSelection)) }
+
+    StatefulDropdownRow(
+      stringResource(R.string.label_ps_country),
+      CountryList,
+      settings.country,
+      displayText = { it.displayName() },
+    ) { country -> onUpdated(settings.copy(country = country)) }
+
+    StatefulDropdownRow(
+      stringResource(R.string.label_ps_currency),
+      CurrencyList,
+      settings.currency,
+    ) { currency -> onUpdated(settings.copy(currency = currency)) }
   }
 }
 
@@ -374,6 +400,59 @@ fun RememberMeSettingsContent(
   }
 }
 
+@Composable
+fun PaymentSessionConfiguration(
+  paymentSessionConfiguration: PaymentSessionConfiguration,
+  modifier: Modifier = Modifier,
+  onUpdated: (PaymentSessionConfiguration) -> Unit,
+) {
+  PrimaryExpandableRow(
+    label = stringResource(R.string.label_ps_configuration),
+    isExpanded = paymentSessionConfiguration.paymentSessionConfigurationExpanded,
+    onExpanded = {
+      onUpdated(
+        paymentSessionConfiguration.copy(
+          paymentSessionConfigurationExpanded = it,
+        ),
+      )
+    },
+  ) {
+    Column(
+      modifier = modifier.padding(start = HEADER_VERTICAL_PADDING),
+      verticalArrangement = Arrangement.spacedBy(ROW_VERTICAL_PADDING),
+    ) {
+      SampleTextOutlinedTextField(
+        label = stringResource(R.string.label_ps_customer_name),
+        currentValue = paymentSessionConfiguration.customerName,
+        onDone = {
+          onUpdated(paymentSessionConfiguration.copy(customerName = it))
+        },
+      )
+      SampleEmailOutlinedTextField(
+        label = stringResource(R.string.label_ps_customer_email),
+        currentValue = paymentSessionConfiguration.customerEmail,
+        onDone = {
+          onUpdated(paymentSessionConfiguration.copy(customerEmail = it))
+        },
+      )
+      SampleNumberOutlinedTextField(
+        label = stringResource(R.string.label_ps_country_code),
+        currentValue = paymentSessionConfiguration.countryCode,
+        onDone = {
+          onUpdated(paymentSessionConfiguration.copy(countryCode = it))
+        },
+      )
+      SampleNumberOutlinedTextField(
+        label = stringResource(R.string.label_ps_phone_number),
+        currentValue = paymentSessionConfiguration.phoneNumber,
+        onDone = {
+          onUpdated(paymentSessionConfiguration.copy(phoneNumber = it))
+        },
+      )
+    }
+  }
+}
+
 @Preview
 @Composable
 private fun BasicSettingsContentPreview() {
@@ -388,6 +467,17 @@ private fun AdvancedSettingsContentPreview() {
   CheckoutComponentSampleTheme {
     AdvancedSettingsContent(
       advancedSettings = AdvancedSettings(),
+      onUpdated = {},
+    )
+  }
+}
+
+@Preview
+@Composable
+private fun PaymentSessionConfigurationPreview() {
+  CheckoutComponentSampleTheme {
+    PaymentSessionConfiguration(
+      paymentSessionConfiguration = PaymentSessionConfiguration(),
       onUpdated = {},
     )
   }

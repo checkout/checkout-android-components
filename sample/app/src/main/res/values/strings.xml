@@ -19,6 +19,8 @@
     <string name="label_appearance">Appearance:</string>
     <string name="label_locale">Locale:</string>
     <string name="label_ps_locale">PS Locale:</string>
+    <string name="label_ps_country">PS Country:</string>
+    <string name="label_ps_currency">PS Currency:</string>
 
     <!-- Advanced Settings Section -->
     <string name="label_advanced_features">Advanced Features</string>
@@ -45,5 +47,13 @@
     <string name="label_rememberme_email">Email</string>
     <string name="label_rememberme_country_code">Country Code</string>
     <string name="label_rememberme_phone_number">Phone Number</string>
+
+    <!-- Payment Session Settings Section -->
+    <string name="label_ps_configuration">Payment Session Configurations</string>
+    <string name="label_ps_customer_name">Customer Name</string>
+    <string name="label_ps_customer_email">Customer Email</string>
+    <string name="label_ps_email">Email</string>
+    <string name="label_ps_country_code">Country Code</string>
+    <string name="label_ps_phone_number">Phone Number</string>
 
 </resources>

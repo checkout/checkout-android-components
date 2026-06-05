@@ -27,6 +27,7 @@ fun <T> StatefulDropdownRow(
   label: String,
   options: List<T>,
   selectedValue: T,
+  displayText: (T) -> String = { it.toString() },
   onValueChange: (T) -> Unit,
 ) {
   Row(
@@ -41,6 +42,8 @@ fun <T> StatefulDropdownRow(
       options = options,
       selectedOption = selectedValue,
       onOptionSelected = onValueChange,
+      displayText = displayText,
+      selectedDisplayText = displayText,
     )
   }
 }

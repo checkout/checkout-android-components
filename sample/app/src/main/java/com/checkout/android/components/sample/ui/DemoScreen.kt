@@ -40,6 +40,7 @@ import com.checkout.android.components.sample.ui.model.AdvancedSettings
 import com.checkout.android.components.sample.ui.model.InitialScreenState
 import com.checkout.android.components.sample.ui.model.MainScreenState
 import com.checkout.android.components.sample.ui.model.PaymentComponentScreenState
+import com.checkout.android.components.sample.ui.model.PaymentSessionConfiguration
 import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.SettingScreenState
 import com.checkout.android.components.sample.ui.model.Settings
@@ -53,12 +54,14 @@ fun DemoScreen(
   settingState: Settings,
   advancedSettingsState: AdvancedSettings,
   rememberMeSettings: RememberMeSettings,
+  paymentSessionConfiguration: PaymentSessionConfiguration,
   modifier: Modifier = Modifier,
   showSettings: () -> Unit = {},
   showFlowComponent: () -> Unit,
   updateSettings: (Settings) -> Unit,
   updateAdvancedSettings: (AdvancedSettings) -> Unit,
   updateRememberMeSettings: (RememberMeSettings) -> Unit,
+  updatePaymentSessionConfiguration: (PaymentSessionConfiguration) -> Unit,
   onSubmitClicked: () -> Unit = {},
   onAmountChanged: (Int) -> Unit = {},
   onCheckTermsAndConditions: (Boolean) -> Unit = {},
@@ -94,6 +97,8 @@ fun DemoScreen(
             onUpdateAdvancedSettings = updateAdvancedSettings,
             rememberMeSettings = rememberMeSettings,
             onUpdateRememberMeSettings = updateRememberMeSettings,
+            paymentSessionConfiguration = paymentSessionConfiguration,
+            onUpdatePaymentSessionConfiguration = updatePaymentSessionConfiguration,
           )
         }
 
@@ -199,11 +204,13 @@ private fun DemoScreenPreview() {
       settingState = Settings(),
       advancedSettingsState = AdvancedSettings(),
       rememberMeSettings = RememberMeSettings(),
+      paymentSessionConfiguration = PaymentSessionConfiguration(),
       showSettings = {},
       showFlowComponent = {},
       updateSettings = {},
       updateAdvancedSettings = {},
       updateRememberMeSettings = {},
+      updatePaymentSessionConfiguration = {},
     )
   }
 }

@@ -1,6 +1,6 @@
 # Checkout Components Sample App
 
-A comprehensive Android sample application demonstrating the capabilities of the Checkout Android Components library. This app showcases payment integration features including card payments, Google Pay, and Remember Me functionality.
+A comprehensive Android sample application demonstrating the capabilities of the Checkout Android Components library. This app showcases payment integration features including card payments, Google Pay, redirect payment methods (Tabby and Tamara), and Remember Me functionality.
 
 ## Table of Contents
 
@@ -24,6 +24,7 @@ This sample application is a **production-ready reference implementation** for i
 - **Flow Component** - A complete payment flow with multiple payment methods
 - **Card Component** - Standalone card payment processing
 - **Google Pay Integration** - Native Google Pay support
+- **Redirect Payment Methods** - APM support for Tabby and Tamara via redirect
 - **Remember Me** - Save and reuse payment methods
 - **Customizable UI** - Full theming and localization support
 - **Sandbox & Production Environments** - Easy switching between test and live environments
@@ -165,6 +166,7 @@ production.components.processing_channel_id=YOUR_PRODUCTION_PROCESSING_CHANNEL_I
 | **Flow Component**      | Complete payment flow with multiple payment component methods                       |
 | **Card Component**      | Standalone card payment processing                                                  |
 | **Google Pay**          | Native Google Pay support                                                           |
+| **Redirect APMs**       | Tabby and Tamara payment methods via the redirect payment methods module           |
 | **Component callbacks** | Configuration examples for **HandleSubmit**, **HandleTap** and **onCardBinChanged** |
 | **Remember Me**         | Save and reuse payment methods                                                      |
 | **Custom UI**           | Full theming and localization support                                               |
@@ -180,7 +182,21 @@ production.components.processing_channel_id=YOUR_PRODUCTION_PROCESSING_CHANNEL_I
 
 - **Card Payments** - Visa, Mastercard, American Express, etc.
 - **Google Pay** - Fast, secure payment using Google Pay
+- **Tabby** - Buy Now, Pay Later via redirect (redirect payment methods module)
+- **Tamara** - Buy Now, Pay Later via redirect (redirect payment methods module)
 - **Remember Me** - Store and reuse payment methods securely
+
+> **Note:** Tabby and Tamara are redirect-based payment methods. They require the
+> `checkout-android-components-payment-methods-redirect` module, which is already
+> declared in `app/build.gradle.kts`:
+>
+> ```kotlin
+> implementation(libs.checkout.android.components.payment.methods.redirect)
+> ```
+>
+> The dependency is defined in `gradle/libs.versions.toml` as
+> `com.checkout:checkout-android-components-payment-methods-redirect`. Without this
+> module, Tabby and Tamara will not be available in the Flow component.
 
 ### Core Capabilities
 
@@ -197,8 +213,8 @@ Access basic settings by clicking the **Settings icon** (⚙️) in the app head
 
 | Setting             | Default         | Options                     | Description                                              |
 |---------------------|-----------------|-----------------------------|----------------------------------------------------------|
-| **Component Type**  | Flow            | `Flow`, `Card`, `GooglePay` | Select the primary payment component                     |
-| **Payment Methods** | Card, GooglePay | Multiple selection          | When using Flow, choose which payment methods to display |
+| **Component Type**  | Flow            | `Flow`, `Card`, `GooglePay`              | Select the primary payment component                     |
+| **Payment Methods** | Card, GooglePay, Tamara, Tabby | Multiple selection         | When using Flow, choose which payment methods to display |
 
 ### Environment Configuration
 
@@ -441,7 +457,7 @@ production.components.processing_channel_id=your_key_here
 
 **Solution**: Ensure the library is properly published. Check `libs.versions.toml` for correct version:
 ```toml
-checkoutAndroidComponents = "1.12.0"
+checkoutAndroidComponents = "2.0.0"
 ```
 
 ---

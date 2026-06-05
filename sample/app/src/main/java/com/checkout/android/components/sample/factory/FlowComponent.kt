@@ -2,6 +2,10 @@ package com.checkout.android.components.sample.factory
 
 import android.content.Context
 import com.checkout.android.components.sample.core.BuildConfig
+import com.checkout.android.components.sample.core.model.Address
+import com.checkout.android.components.sample.core.model.AddressAndPhone
+import com.checkout.android.components.sample.core.model.Customer
+import com.checkout.android.components.sample.core.model.Phone
 import com.checkout.android.components.sample.core.network.model.session.PaymentSessions
 import com.checkout.android.components.sample.core.network.model.session.SubmitPaymentSession
 import com.checkout.android.components.sample.core.network.repository.PaymentSessionRepository
@@ -9,6 +13,7 @@ import com.checkout.android.components.sample.extension.toDesignTokens
 import com.checkout.android.components.sample.extension.toPaymentSessionLocale
 import com.checkout.android.components.sample.ui.model.Components
 import com.checkout.android.components.sample.ui.model.PaymentMethods
+import com.checkout.android.components.sample.ui.model.PaymentSessionConfiguration
 import com.checkout.android.components.sample.ui.model.Settings
 import com.checkout.components.core.CheckoutComponentsFactory
 import com.checkout.components.interfaces.Environment
@@ -56,6 +61,7 @@ class FlowComponent @Inject constructor(
   suspend fun createConfigurationFromSettings(
     context: Context,
     settings: Settings = Settings(),
+    paymentSessionConfiguration: PaymentSessionConfiguration = PaymentSessionConfiguration(),
     callbacks: ComponentCallback,
   ): CheckoutComponentConfiguration {
     val publicKey = when (settings.environment) {
@@ -68,10 +74,17 @@ class FlowComponent @Inject constructor(
       Environment.PRODUCTION -> BuildConfig.PRODUCTION_PROCESSING_CHANNEL_ID.ifEmpty { null }
     }
 
+    val customer = createCustomer(paymentSessionConfiguration, settings)
+    val address = createAddress(settings.country.iso3166Alpha2)
+
     val paymentSession = PaymentSessions(
       enabledPaymentMethods = enablePaymentMethod(settings),
       processingChannelId = processingChannelId,
       locale = settings.psLocale.toPaymentSessionLocale(),
+      customer = customer,
+      billing = AddressAndPhone(address, customer.phone),
+      shipping = AddressAndPhone(address, customer.phone),
+      currency = settings.currency.name,
     )
 
     val response = repository.createPaymentSession(
@@ -271,4 +284,27 @@ class FlowComponent @Inject constructor(
   private fun handleActivityResult(resultCode: Int, data: String) {
     checkoutComponent?.handleActivityResult(resultCode, data)
   }
+
+  private fun createCustomer(
+    paymentSessionConfiguration: PaymentSessionConfiguration,
+    settings: Settings,
+  ): Customer = Customer(
+    email = paymentSessionConfiguration.customerEmail.ifEmpty { "default@mail.com" },
+    name = paymentSessionConfiguration.customerName.ifEmpty { "John Doe" },
+    phone = takeIf { paymentSessionConfiguration.countryCode.isNotEmpty() && paymentSessionConfiguration.phoneNumber.isNotEmpty() }?.let {
+      Phone(
+        countryCode = paymentSessionConfiguration.countryCode,
+        number = paymentSessionConfiguration.phoneNumber,
+      )
+    } ?: Phone("1234 567890", settings.country.dialingCode),
+  )
+
+  private fun createAddress(country: String) = Address(
+    addressLine1 = "addressLine1",
+    addressLine2 = "addressLine2",
+    country = country,
+    state = "state",
+    zip = "zip",
+    city = "city",
+  )
 }
