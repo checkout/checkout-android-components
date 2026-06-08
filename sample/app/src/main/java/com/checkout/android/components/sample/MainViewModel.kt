@@ -127,6 +127,16 @@ class MainViewModel @Inject constructor(
           component,
           specificOptions,
         )
+
+        Components.Tabby -> flowComponent.createTabbyPaymentMethodComponent(
+          component,
+          specificOptions,
+        )
+
+        Components.Tamara -> flowComponent.createTamaraPaymentMethodComponent(
+          component,
+          specificOptions,
+        )
       }
 
       _screenState.update {

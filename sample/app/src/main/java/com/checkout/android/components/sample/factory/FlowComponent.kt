@@ -2,6 +2,10 @@ package com.checkout.android.components.sample.factory
 
 import android.content.Context
 import com.checkout.android.components.sample.core.BuildConfig
+import com.checkout.android.components.sample.core.model.Address
+import com.checkout.android.components.sample.core.model.AddressAndPhoneNumber
+import com.checkout.android.components.sample.core.model.Customer
+import com.checkout.android.components.sample.core.model.Phone
 import com.checkout.android.components.sample.core.network.model.session.PaymentSessions
 import com.checkout.android.components.sample.core.network.model.session.SubmitPaymentSession
 import com.checkout.android.components.sample.core.network.repository.PaymentSessionRepository
@@ -21,7 +25,10 @@ import com.checkout.components.interfaces.model.ApiCallResult
 import com.checkout.components.interfaces.model.ComponentName
 import com.checkout.components.interfaces.model.PaymentMethodName
 import com.checkout.components.interfaces.model.PaymentSessionResponse
+import com.checkout.components.interfaces.model.contact.Country
 import com.checkout.components.interfaces.model.paymentsession.PaymentSessionSubmissionResult
+import com.checkout.components.paymentmethods.redirect.tabby.Tabby
+import com.checkout.components.paymentmethods.redirect.tamara.Tamara
 import com.checkout.components.wallet.wrapper.GooglePayFlowCoordinator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -72,6 +79,10 @@ class FlowComponent @Inject constructor(
       enabledPaymentMethods = enablePaymentMethod(settings),
       processingChannelId = processingChannelId,
       locale = settings.psLocale.toPaymentSessionLocale(),
+      currency = settings.psCurrency,
+      billing = buildAddressAndPhone(settings.psCountry),
+      customer = buildCustomer(settings.psCountry, settings.psEmail),
+      shipping = buildAddressAndPhone(settings.psCountry),
     )
 
     val response = repository.createPaymentSession(
@@ -194,6 +205,22 @@ class FlowComponent @Inject constructor(
     specificOptions = specificOptions,
   )
 
+  fun createTabbyPaymentMethodComponent(
+    checkoutComponents: CheckoutComponents,
+    specificOptions: ComponentOption? = null,
+  ): PaymentMethodComponent = checkoutComponents.create(
+    specificOptions = specificOptions,
+    componentName = Tabby.NAME,
+  )
+
+  fun createTamaraPaymentMethodComponent(
+    checkoutComponents: CheckoutComponents,
+    specificOptions: ComponentOption? = null,
+  ): PaymentMethodComponent = checkoutComponents.create(
+    componentName = Tamara.NAME,
+    specificOptions = specificOptions,
+  )
+
   /**
    * Submits the payment session data to the repository to finalize the payment process.
    *
@@ -267,6 +294,31 @@ class FlowComponent @Inject constructor(
   } else {
     listOf(settings.component.name.lowercase())
   }
+
+  private fun buildPhone(country: String): Phone {
+    val dialingCode = Country.fromIso3166Alpha2(country)?.dialingCode.orEmpty()
+    return Phone(number = "1234567890", countryCode = "+$dialingCode")
+  }
+
+  private fun buildAddress(country: String) = Address(
+    country = country,
+    addressLine1 = "addressLine1",
+    addressLine2 = "addressLine2",
+    city = "city",
+    state = "state",
+    zip = "zip",
+  )
+
+  private fun buildAddressAndPhone(country: String) = AddressAndPhoneNumber(
+    address = buildAddress(country),
+    phone = buildPhone(country),
+  )
+
+  private fun buildCustomer(country: String, email: String) = Customer(
+    email = email.ifBlank { "random@email.com" },
+    name = "customerName",
+    phone = buildPhone(country),
+  )
 
   private fun handleActivityResult(resultCode: Int, data: String) {
     checkoutComponent?.handleActivityResult(resultCode, data)

@@ -10,6 +10,12 @@ val ComponentList = Components.entries.toList()
 
 val PaymentMethodsList = PaymentMethods.entries.toList()
 
+val RegionPresetList = RegionPreset.entries.toList()
+
+val CurrencyList = listOf("GBP", "USD", "EUR", "SAR", "AED", "KWD", "SGD")
+
+val BillingCountryList = listOf("GB", "US", "DE", "SA", "AE", "KW", "SG")
+
 val EnvironmentList = Environment.entries.toList()
 
 val AppearanceList = Appearance.entries.toList()

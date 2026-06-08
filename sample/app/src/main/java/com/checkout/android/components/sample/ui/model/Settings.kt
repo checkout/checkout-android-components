@@ -16,4 +16,8 @@ data class Settings(
   val appearance: Appearance = Appearance.Light,
   val locale: Locale = Locale.En,
   val psLocale: Locale = Locale.En,
+  val psCurrency: String = "GBP",
+  val psCountry: String = "GB",
+  val psEmail: String = "",
+  val preset: RegionPreset = RegionPreset.UK,
 )

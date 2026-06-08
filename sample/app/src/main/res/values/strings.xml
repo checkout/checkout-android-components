@@ -19,6 +19,10 @@
     <string name="label_appearance">Appearance:</string>
     <string name="label_locale">Locale:</string>
     <string name="label_ps_locale">PS Locale:</string>
+    <string name="label_region_preset">Region Preset:</string>
+    <string name="label_currency">Currency:</string>
+    <string name="label_billing_country">Address Country:</string>
+    <string name="label_session_email">Customer Email:</string>
 
     <!-- Advanced Settings Section -->
     <string name="label_advanced_features">Advanced Features</string>
