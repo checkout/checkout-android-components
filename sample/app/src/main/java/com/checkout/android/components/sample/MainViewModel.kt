@@ -135,7 +135,7 @@ class MainViewModel @Inject constructor(
 
         Components.Tamara -> flowComponent.createTamaraPaymentMethodComponent(
           component,
-          specificOptions,
+            specificOptions,
         )
       }
 
