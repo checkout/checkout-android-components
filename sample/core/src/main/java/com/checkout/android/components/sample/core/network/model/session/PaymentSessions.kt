@@ -9,25 +9,25 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PaymentSessions(
-    val amount: Int = 10500,
-    val currency: String = "GBP",
-    val reference: String = "REFERENCE",
-    val billing: AddressAndPhoneNumber? = null,
-    @SerialName("success_url")
-    val successUrl: String = "https://success_calback",
-    @SerialName("failure_url")
-    val failureUrl: String = "https://failure_calback",
-    val customer: Customer? = null,
-    @SerialName("processing_channel_id")
-    @EncodeDefault(EncodeDefault.Mode.NEVER)
-    val processingChannelId: String? = null,
-    val shipping: AddressAndPhoneNumber? = null,
-    @SerialName("enabled_payment_methods")
-    val enabledPaymentMethods: List<String>,
-    val items: List<PaymentItem> = listOf(PaymentItem("Item 1", 1, 100)),
-    @SerialName("3ds")
-    val threeDS: ThreeDS = ThreeDS(),
-    val locale: String? = null,
+  val amount: Int = 10500,
+  val currency: String = "GBP",
+  val reference: String = "REFERENCE",
+  val billing: AddressAndPhoneNumber? = null,
+  @SerialName("success_url")
+  val successUrl: String = "https://success_calback",
+  @SerialName("failure_url")
+  val failureUrl: String = "https://failure_calback",
+  val customer: Customer? = null,
+  @SerialName("processing_channel_id")
+  @EncodeDefault(EncodeDefault.Mode.NEVER)
+  val processingChannelId: String? = null,
+  val shipping: AddressAndPhoneNumber? = null,
+  @SerialName("enabled_payment_methods")
+  val enabledPaymentMethods: List<String>,
+  val items: List<PaymentItem> = listOf(PaymentItem("Item 1", 1, 100)),
+  @SerialName("3ds")
+  val threeDS: ThreeDS = ThreeDS(),
+  val locale: String? = null,
 )
 
 @Serializable

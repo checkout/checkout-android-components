@@ -24,8 +24,8 @@ import com.checkout.components.interfaces.component.ComponentOption
 import com.checkout.components.interfaces.model.ApiCallResult
 import com.checkout.components.interfaces.model.ComponentName
 import com.checkout.components.interfaces.model.PaymentMethodName
-import com.checkout.components.interfaces.model.contact.Country
 import com.checkout.components.interfaces.model.PaymentSessionResponse
+import com.checkout.components.interfaces.model.contact.Country
 import com.checkout.components.interfaces.model.paymentsession.PaymentSessionSubmissionResult
 import com.checkout.components.paymentmethods.redirect.tabby.Tabby
 import com.checkout.components.paymentmethods.redirect.tamara.Tamara
@@ -209,8 +209,8 @@ class FlowComponent @Inject constructor(
     checkoutComponents: CheckoutComponents,
     specificOptions: ComponentOption? = null,
   ): PaymentMethodComponent = checkoutComponents.create(
-      specificOptions = specificOptions,
-      componentName = Tabby.NAME
+    specificOptions = specificOptions,
+    componentName = Tabby.NAME,
   )
 
   fun createTamaraPaymentMethodComponent(

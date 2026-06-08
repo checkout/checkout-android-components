@@ -130,12 +130,12 @@ class MainViewModel @Inject constructor(
 
         Components.Tabby -> flowComponent.createTabbyPaymentMethodComponent(
           component,
-            specificOptions,
+          specificOptions,
         )
 
         Components.Tamara -> flowComponent.createTamaraPaymentMethodComponent(
           component,
-            specificOptions,
+          specificOptions,
         )
       }
 
