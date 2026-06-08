@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,17 +36,20 @@ import com.checkout.android.components.sample.ui.components.SwitchRow
 import com.checkout.android.components.sample.ui.model.AddressConfigList
 import com.checkout.android.components.sample.ui.model.AdvancedSettings
 import com.checkout.android.components.sample.ui.model.AppearanceList
+import com.checkout.android.components.sample.ui.model.BillingCountryList
 import com.checkout.android.components.sample.ui.model.CardSchemeList
 import com.checkout.android.components.sample.ui.model.CardTypesList
 import com.checkout.android.components.sample.ui.model.CardholderPositionList
 import com.checkout.android.components.sample.ui.model.ComponentList
 import com.checkout.android.components.sample.ui.model.Components
+import com.checkout.android.components.sample.ui.model.CurrencyList
 import com.checkout.android.components.sample.ui.model.EnvironmentList
 import com.checkout.android.components.sample.ui.model.GooglePayCardSchemeList
 import com.checkout.android.components.sample.ui.model.GooglePayCardTypesList
 import com.checkout.android.components.sample.ui.model.Localizations
 import com.checkout.android.components.sample.ui.model.PaymentActionList
 import com.checkout.android.components.sample.ui.model.PaymentMethodsList
+import com.checkout.android.components.sample.ui.model.RegionPresetList
 import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.Settings
 import com.checkout.android.components.sample.ui.model.SubmitPaymentHandler
@@ -136,6 +140,12 @@ fun BasicSettingsContent(
     }
 
     StatefulDropdownRow(
+      stringResource(R.string.label_region_preset),
+      RegionPresetList,
+      settings.preset,
+    ) { preset -> onUpdated(preset.applyTo(settings)) }
+
+    StatefulDropdownRow(
       stringResource(R.string.label_environment),
       EnvironmentList,
       settings.environment,
@@ -158,6 +168,26 @@ fun BasicSettingsContent(
       Localizations,
       settings.psLocale,
     ) { localeSelection -> onUpdated(settings.copy(psLocale = localeSelection)) }
+
+    StatefulDropdownRow(
+      stringResource(R.string.label_currency),
+      CurrencyList,
+      settings.psCurrency,
+    ) { currency -> onUpdated(settings.copy(psCurrency = currency)) }
+
+    StatefulDropdownRow(
+      stringResource(R.string.label_billing_country),
+      BillingCountryList,
+      settings.psCountry,
+    ) { country -> onUpdated(settings.copy(psCountry = country)) }
+
+    key(settings.psEmail) {
+      SampleEmailOutlinedTextField(
+        label = stringResource(R.string.label_session_email),
+        currentValue = settings.psEmail,
+        modifier = Modifier.fillMaxWidth(),
+      ) { onUpdated(settings.copy(psEmail = it)) }
+    }
   }
 }
 

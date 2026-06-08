@@ -18,7 +18,7 @@ ksp = "2.3.4"
 coroutinesCore = "1.10.2"
 kotlinSerialization = "1.10.0"
 
-checkoutAndroidComponents = "1.12.0"
+checkoutAndroidComponents = "2.0.0"
 appcompat = "1.7.1"
 material = "1.13.0"
 
@@ -43,6 +43,9 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 # Checkout Flow
 checkout-android-components = { module = "com.checkout:checkout-android-components", version.ref = "checkoutAndroidComponents" }
 checkout-android-components-interfaces = { module = "com.checkout:checkout-android-components-interfaces", version.ref = "checkoutAndroidComponents" }
+checkout-android-components-redirect-handler = { module = "com.checkout:checkout-android-components-redirect-handler", version.ref = "checkoutAndroidComponents" }
+checkout-android-components-payment-methods-core = { module = "com.checkout:checkout-android-components-payment-methods-core", version.ref = "checkoutAndroidComponents" }
+checkout-android-components-payment-methods-redirect = { module = "com.checkout:checkout-android-components-payment-methods-redirect", version.ref = "checkoutAndroidComponents" }
 
 # Third party
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }

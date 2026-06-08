@@ -10,10 +10,14 @@ import com.checkout.components.interfaces.localisation.Locale
  */
 @Stable
 data class Settings(
-  val component: Components = Components.Flow,
-  val paymentMethods: List<PaymentMethods> = listOf(PaymentMethods.Card, PaymentMethods.GooglePay),
-  val environment: Environment = Environment.SANDBOX,
-  val appearance: Appearance = Appearance.Light,
-  val locale: Locale = Locale.En,
-  val psLocale: Locale = Locale.En,
+    val component: Components = Components.Flow,
+    val paymentMethods: List<PaymentMethods> = listOf(PaymentMethods.Card, PaymentMethods.GooglePay),
+    val environment: Environment = Environment.SANDBOX,
+    val appearance: Appearance = Appearance.Light,
+    val locale: Locale = Locale.En,
+    val psLocale: Locale = Locale.En,
+    val psCurrency: String = "GBP",
+    val psCountry: String = "GB",
+    val psEmail: String = "",
+    val preset: RegionPreset = RegionPreset.UK,
 )
