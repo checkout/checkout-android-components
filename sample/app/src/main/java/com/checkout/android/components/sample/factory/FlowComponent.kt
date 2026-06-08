@@ -315,7 +315,7 @@ class FlowComponent @Inject constructor(
   )
 
   private fun buildCustomer(country: String, email: String) = Customer(
-    email = email.ifBlank { "random@email.com" },
+    email = email,
     name = "customerName",
     phone = buildPhone(country),
   )

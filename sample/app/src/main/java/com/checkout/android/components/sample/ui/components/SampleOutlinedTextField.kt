@@ -9,6 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -26,8 +28,13 @@ fun SampleOutlineTextField(
   onDone: (String) -> Unit,
   modifier: Modifier = Modifier,
   keyboardType: KeyboardType = KeyboardType.Text,
+  onValueChange: (String) -> Unit = {},
 ) {
   val keyboardController = LocalSoftwareKeyboardController.current
+
+  LaunchedEffect(state) {
+    snapshotFlow { state.text.toString() }.collect { onValueChange(it) }
+  }
 
   OutlinedTextField(
     modifier = modifier,
@@ -55,15 +62,15 @@ fun SampleNumberOutlinedTextField(
   modifier: Modifier = Modifier,
   currentValue: String = "",
   onDone: (String) -> Unit = {},
+  onValueChange: (String) -> Unit = {},
 ) {
-  val state = rememberTextFieldState(currentValue)
-
   SampleOutlineTextField(
     label = label,
     modifier = modifier,
     keyboardType = KeyboardType.Phone,
-    state = state,
+    state = rememberTextFieldState(currentValue),
     onDone = onDone,
+    onValueChange = onValueChange,
   )
 }
 
@@ -73,14 +80,14 @@ fun SampleEmailOutlinedTextField(
   modifier: Modifier = Modifier,
   currentValue: String = "",
   onDone: (String) -> Unit = {},
+  onValueChange: (String) -> Unit = {},
 ) {
-  val state = rememberTextFieldState(currentValue)
-
   SampleOutlineTextField(
     label = label,
     modifier = modifier,
     keyboardType = KeyboardType.Email,
-    state = state,
+    state = rememberTextFieldState(currentValue),
     onDone = onDone,
+    onValueChange = onValueChange,
   )
 }
