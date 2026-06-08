@@ -181,12 +181,13 @@ fun BasicSettingsContent(
       settings.psCountry,
     ) { country -> onUpdated(settings.copy(psCountry = country)) }
 
-    key(settings.psEmail) {
+    key(settings.preset) {
       SampleEmailOutlinedTextField(
         label = stringResource(R.string.label_session_email),
         currentValue = settings.psEmail,
         modifier = Modifier.fillMaxWidth(),
-      ) { onUpdated(settings.copy(psEmail = it)) }
+        onValueChange = { onUpdated(settings.copy(psEmail = it)) },
+      )
     }
   }
 }
@@ -380,23 +381,17 @@ fun RememberMeSettingsContent(
           SampleEmailOutlinedTextField(
             label = stringResource(R.string.label_rememberme_email),
             currentValue = rememberMeSettings.email,
-            onDone = {
-              onUpdated(rememberMeSettings.copy(email = it))
-            },
+            onValueChange = { onUpdated(rememberMeSettings.copy(email = it)) },
           )
           SampleNumberOutlinedTextField(
             label = stringResource(R.string.label_rememberme_country_code),
             currentValue = rememberMeSettings.countryCode,
-            onDone = {
-              onUpdated(rememberMeSettings.copy(countryCode = it))
-            },
+            onValueChange = { onUpdated(rememberMeSettings.copy(countryCode = it)) },
           )
           SampleNumberOutlinedTextField(
             label = stringResource(R.string.label_rememberme_phone_number),
             currentValue = rememberMeSettings.phoneNumber,
-            onDone = {
-              onUpdated(rememberMeSettings.copy(phoneNumber = it))
-            },
+            onValueChange = { onUpdated(rememberMeSettings.copy(phoneNumber = it)) },
           )
         }
       }

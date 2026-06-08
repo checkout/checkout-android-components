@@ -18,6 +18,6 @@ data class Settings(
   val psLocale: Locale = Locale.En,
   val psCurrency: String = "GBP",
   val psCountry: String = "GB",
-  val psEmail: String = "",
+  val psEmail: String = "customer@example.com",
   val preset: RegionPreset = RegionPreset.UK,
 )
