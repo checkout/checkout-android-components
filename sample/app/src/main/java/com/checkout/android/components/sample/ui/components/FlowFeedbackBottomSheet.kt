@@ -197,7 +197,7 @@ private fun FlowFeedbackBottomSheetErrorPreview() {
             "session",
             "payment_session_id",
             ComponentName.Flow,
-            paymentId = ""
+            paymentId = "",
           ),
         ),
       ),
