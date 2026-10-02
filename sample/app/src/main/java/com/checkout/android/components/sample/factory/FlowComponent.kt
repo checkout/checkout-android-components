@@ -59,6 +59,8 @@ class FlowComponent @Inject constructor(
    *
    * @param context The application context.
    * @param settings The user-defined settings for the checkout components.
+   * @param storedCardSettings The stored card settings that drive both the session's `stored_card`
+   * payment method configuration and the component's stored card configuration.
    * @param callbacks The component callbacks to be used for handling component events.
    *
    * @return A [CheckoutComponentConfiguration] initialized with the provided settings and session data.

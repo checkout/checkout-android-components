@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -427,11 +428,12 @@ fun StoredCardSettingsContent(
       modifier = modifier.padding(start = HEADER_VERTICAL_PADDING),
       verticalArrangement = Arrangement.spacedBy(ROW_VERTICAL_PADDING),
     ) {
+      val latestStoredCardSettings = rememberUpdatedState(storedCardSettings)
       SampleOutlineTextField(
         label = stringResource(R.string.label_stored_card_customer_id),
         state = rememberTextFieldState(storedCardSettings.customerId),
-        onDone = { onUpdated(storedCardSettings.copy(customerId = it)) },
-        onValueChange = { onUpdated(storedCardSettings.copy(customerId = it)) },
+        onDone = { onUpdated(latestStoredCardSettings.value.copy(customerId = it)) },
+        onValueChange = { onUpdated(latestStoredCardSettings.value.copy(customerId = it)) },
       )
 
       SecondaryDropdownRow(

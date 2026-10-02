@@ -63,10 +63,11 @@ class MainViewModel @Inject constructor(
   fun showFlowComponent(context: Context) {
     viewModelScope.launch {
       val advancedSettings = advancedSettings.value
+      val storedCardSettings = _storedCardSettings.value
       val config = flowComponent.createConfigurationFromSettings(
         context = context,
         settings = settingState.value,
-        storedCardSettings = _storedCardSettings.value,
+        storedCardSettings = storedCardSettings,
         callbacks = buildComponentCallbacks(),
       )
 
@@ -103,8 +104,7 @@ class MainViewModel @Inject constructor(
         null
       }
 
-      val storedCardConfiguration = if (_storedCardSettings.value.enabled) {
-        val storedCardSettings = _storedCardSettings.value
+      val storedCardConfiguration = if (storedCardSettings.enabled) {
         StoredCardConfiguration(
           displayMode = storedCardSettings.displayMode,
           captureCardCvv = storedCardSettings.captureCardCvv,
