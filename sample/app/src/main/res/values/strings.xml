@@ -23,6 +23,8 @@
     <string name="label_currency">Currency:</string>
     <string name="label_billing_country">Address Country:</string>
     <string name="label_session_email">Customer Email:</string>
+    <string name="label_session_phone_number">Customer Phone Number:</string>
+    <string name="label_payment_session_setup">Payment Session Setup</string>
 
     <!-- Advanced Settings Section -->
     <string name="label_advanced_features">Advanced Features</string>

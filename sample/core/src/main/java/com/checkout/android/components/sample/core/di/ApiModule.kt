@@ -48,6 +48,7 @@ object ApiModule {
     val json = Json {
       isLenient = true
       encodeDefaults = true
+      explicitNulls = false
       ignoreUnknownKeys = true
     }
 

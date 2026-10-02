@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -189,18 +188,48 @@ fun BasicSettingsContent(
       settings.psCurrency,
     ) { currency -> onUpdated(settings.copy(psCurrency = currency)) }
 
-    StatefulDropdownRow(
-      stringResource(R.string.label_billing_country),
-      BillingCountryList,
-      settings.psCountry,
-    ) { country -> onUpdated(settings.copy(psCountry = country)) }
+    PaymentSessionSetupContent(
+      settings = settings,
+      onUpdated = onUpdated,
+    )
+  }
+}
 
-    key(settings.preset) {
+@Composable
+fun PaymentSessionSetupContent(
+  settings: Settings,
+  modifier: Modifier = Modifier,
+  onUpdated: (Settings) -> Unit = {},
+) {
+  PrimaryExpandableRow(
+    label = stringResource(R.string.label_payment_session_setup),
+    isExpanded = settings.psSetupExpanded,
+    onExpanded = { onUpdated(settings.copy(psSetupExpanded = it)) },
+  ) {
+    Column(
+      modifier = modifier.padding(start = HEADER_VERTICAL_PADDING),
+      verticalArrangement = Arrangement.spacedBy(ROW_VERTICAL_PADDING),
+    ) {
+      val latestSettings = rememberUpdatedState(settings)
+
+      StatefulDropdownRow(
+        stringResource(R.string.label_billing_country),
+        BillingCountryList,
+        settings.psCountry,
+      ) { country -> onUpdated(latestSettings.value.copy(psCountry = country)) }
+
       SampleEmailOutlinedTextField(
         label = stringResource(R.string.label_session_email),
         currentValue = settings.psEmail,
         modifier = Modifier.fillMaxWidth(),
-        onValueChange = { onUpdated(settings.copy(psEmail = it)) },
+        onValueChange = { onUpdated(latestSettings.value.copy(psEmail = it)) },
+      )
+
+      SampleNumberOutlinedTextField(
+        label = stringResource(R.string.label_session_phone_number),
+        currentValue = settings.psPhoneNumber,
+        modifier = Modifier.fillMaxWidth(),
+        onValueChange = { onUpdated(latestSettings.value.copy(psPhoneNumber = it)) },
       )
     }
   }

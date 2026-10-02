@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Customer(
-  val email: String,
+  val email: String? = null,
   val name: String,
-  val phone: Phone,
+  val phone: Phone? = null,
 )

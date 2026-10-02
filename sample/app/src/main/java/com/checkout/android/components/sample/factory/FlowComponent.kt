@@ -87,7 +87,7 @@ class FlowComponent @Inject constructor(
       locale = settings.psLocale.toPaymentSessionLocale(),
       currency = settings.psCurrency,
       billing = buildAddressAndPhone(settings.psCountry),
-      customer = buildCustomer(settings.psCountry, settings.psEmail),
+      customer = buildCustomer(settings.psCountry, settings.psEmail, settings.psPhoneNumber),
       shipping = buildAddressAndPhone(settings.psCountry),
       paymentMethodConfiguration = buildPaymentMethodConfiguration(storedCardSettings),
     )
@@ -322,11 +322,6 @@ class FlowComponent @Inject constructor(
     )
   }
 
-  private fun buildPhone(country: String): Phone {
-    val dialingCode = Country.fromIso3166Alpha2(country)?.dialingCode.orEmpty()
-    return Phone(number = "1234567890", countryCode = "+$dialingCode")
-  }
-
   private fun buildAddress(country: String) = Address(
     country = country,
     addressLine1 = "addressLine1",
@@ -338,14 +333,18 @@ class FlowComponent @Inject constructor(
 
   private fun buildAddressAndPhone(country: String) = AddressAndPhoneNumber(
     address = buildAddress(country),
-    phone = buildPhone(country),
   )
 
-  private fun buildCustomer(country: String, email: String) = Customer(
-    email = email,
-    name = "customerName",
-    phone = buildPhone(country),
-  )
+  private fun buildCustomer(country: String, email: String, phoneNumber: String): Customer {
+    val dialingCode = Country.fromIso3166Alpha2(country)?.dialingCode.orEmpty()
+    return Customer(
+      email = email.takeIf { it.isNotBlank() },
+      name = "customerName",
+      phone = phoneNumber
+        .takeIf { it.isNotBlank() }
+        ?.let { Phone(number = it, countryCode = "+$dialingCode") },
+    )
+  }
 
   private fun handleActivityResult(resultCode: Int, data: String) {
     checkoutComponent?.handleActivityResult(resultCode, data)
