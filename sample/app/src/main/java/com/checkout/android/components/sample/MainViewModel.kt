@@ -13,6 +13,7 @@ import com.checkout.android.components.sample.ui.model.PaymentResultState
 import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.SettingScreenState
 import com.checkout.android.components.sample.ui.model.Settings
+import com.checkout.android.components.sample.ui.model.StoredCardSettings
 import com.checkout.android.components.sample.ui.model.SubmitPaymentHandler
 import com.checkout.components.interfaces.api.PaymentMethodComponent
 import com.checkout.components.interfaces.component.CardConfiguration
@@ -21,6 +22,7 @@ import com.checkout.components.interfaces.component.ComponentOption
 import com.checkout.components.interfaces.component.GooglePayConfiguration
 import com.checkout.components.interfaces.component.PaymentButtonAction
 import com.checkout.components.interfaces.component.RememberMeConfiguration
+import com.checkout.components.interfaces.component.StoredCardConfiguration
 import com.checkout.components.interfaces.model.ApiCallResult
 import com.checkout.components.interfaces.model.CallbackResult
 import com.checkout.components.interfaces.model.CardMetadata
@@ -46,6 +48,7 @@ class MainViewModel @Inject constructor(
 
   private val _advancedSettings = MutableStateFlow(AdvancedSettings())
   private val _rememberMeSettings = MutableStateFlow(RememberMeSettings())
+  private val _storedCardSettings = MutableStateFlow(StoredCardSettings())
 
   val screenState = _screenState.asStateFlow()
 
@@ -55,12 +58,16 @@ class MainViewModel @Inject constructor(
 
   val rememberMeSettings = _rememberMeSettings.asStateFlow()
 
+  val storedCardSettings = _storedCardSettings.asStateFlow()
+
   fun showFlowComponent(context: Context) {
     viewModelScope.launch {
       val advancedSettings = advancedSettings.value
+      val storedCardSettings = _storedCardSettings.value
       val config = flowComponent.createConfigurationFromSettings(
         context = context,
         settings = settingState.value,
+        storedCardSettings = storedCardSettings,
         callbacks = buildComponentCallbacks(),
       )
 
@@ -97,6 +104,17 @@ class MainViewModel @Inject constructor(
         null
       }
 
+      val storedCardConfiguration = if (storedCardSettings.enabled) {
+        StoredCardConfiguration(
+          displayMode = storedCardSettings.displayMode,
+          captureCardCvv = storedCardSettings.captureCardCvv,
+          acceptedCardSchemes = storedCardSettings.acceptedCardSchemes,
+          acceptedCardTypes = storedCardSettings.acceptedCardTypes,
+        )
+      } else {
+        null
+      }
+
       val specificOptions = ComponentOption(
         showPayButton = advancedSettings.showCardPayButton,
         googlePayConfiguration = GooglePayConfiguration(
@@ -110,6 +128,7 @@ class MainViewModel @Inject constructor(
         ),
         addressConfiguration = advancedSettings.addressConfiguration.configuration(),
         rememberMeConfiguration = rememberMeConfiguration,
+        storedCardConfiguration = storedCardConfiguration,
       )
 
       val paymentMethodComponent = when (settingState.value.component) {
@@ -165,6 +184,12 @@ class MainViewModel @Inject constructor(
   fun updateRememberMeSettings(rememberMeSettings: RememberMeSettings) {
     _rememberMeSettings.update {
       rememberMeSettings
+    }
+  }
+
+  fun updateStoredCardSettings(storedCardSettings: StoredCardSettings) {
+    _storedCardSettings.update {
+      storedCardSettings
     }
   }
 

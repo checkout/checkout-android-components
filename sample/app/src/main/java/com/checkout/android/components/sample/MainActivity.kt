@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
           val advancedSettingsState by viewModel.advancedSettings.collectAsStateWithLifecycle()
           val rememberMeSettings by viewModel.rememberMeSettings.collectAsStateWithLifecycle()
+          val storedCardSettings by viewModel.storedCardSettings.collectAsStateWithLifecycle()
 
           val context = LocalContext.current
 
@@ -48,12 +49,14 @@ class MainActivity : ComponentActivity() {
             settingState = settingState,
             advancedSettingsState = advancedSettingsState,
             rememberMeSettings = rememberMeSettings,
+            storedCardSettings = storedCardSettings,
 
             showSettings = viewModel::showSettings,
             showFlowComponent = { viewModel.showFlowComponent(context) },
             updateSettings = viewModel::updateSettings,
             updateAdvancedSettings = viewModel::updateAdvancedSettings,
             updateRememberMeSettings = viewModel::updateRememberMeSettings,
+            updateStoredCardSettings = viewModel::updateStoredCardSettings,
             onSubmitClicked = viewModel::onSubmit,
             onAmountChanged = viewModel::onAmountChanged,
             onCheckTermsAndConditions = viewModel::onCheckTermsAndConditions,

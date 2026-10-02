@@ -5,6 +5,7 @@ import com.checkout.components.interfaces.component.PaymentButtonAction
 import com.checkout.components.interfaces.model.CardSchemeName
 import com.checkout.components.interfaces.model.CardTypeName
 import com.checkout.components.interfaces.model.CardholderNamePosition
+import com.checkout.components.interfaces.model.StoredCardDisplayMode
 
 val ComponentList = Components.entries.toList()
 
@@ -34,3 +35,5 @@ val GooglePayCardSchemeList = CardSchemeName.GooglePay.entries
 val CardTypesList = CardTypeName.entries
 
 val GooglePayCardTypesList = CardTypeName.GooglePay.entries
+
+val StoredCardDisplayModeList = StoredCardDisplayMode.entries.toList()
