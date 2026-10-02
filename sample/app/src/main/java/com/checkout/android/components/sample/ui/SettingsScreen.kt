@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import com.checkout.android.components.sample.ui.components.PrimaryExpandableRow
 import com.checkout.android.components.sample.ui.components.ROW_VERTICAL_PADDING
 import com.checkout.android.components.sample.ui.components.SampleEmailOutlinedTextField
 import com.checkout.android.components.sample.ui.components.SampleNumberOutlinedTextField
+import com.checkout.android.components.sample.ui.components.SampleOutlineTextField
 import com.checkout.android.components.sample.ui.components.SecondaryDropdownRow
 import com.checkout.android.components.sample.ui.components.SecondaryExpandableRow
 import com.checkout.android.components.sample.ui.components.SingleSelectMenu
@@ -52,6 +54,8 @@ import com.checkout.android.components.sample.ui.model.PaymentMethodsList
 import com.checkout.android.components.sample.ui.model.RegionPresetList
 import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.Settings
+import com.checkout.android.components.sample.ui.model.StoredCardDisplayModeList
+import com.checkout.android.components.sample.ui.model.StoredCardSettings
 import com.checkout.android.components.sample.ui.model.SubmitPaymentHandler
 import com.checkout.android.components.sample.ui.model.SubmitPaymentList
 import com.checkout.android.components.sample.ui.theme.CheckoutComponentSampleTheme
@@ -61,9 +65,11 @@ fun SettingsScreen(
   settings: Settings,
   advancedSettings: AdvancedSettings,
   rememberMeSettings: RememberMeSettings,
+  storedCardSettings: StoredCardSettings,
   onUpdated: (Settings) -> Unit,
   onUpdateAdvancedSettings: (AdvancedSettings) -> Unit,
   onUpdateRememberMeSettings: (RememberMeSettings) -> Unit,
+  onUpdateStoredCardSettings: (StoredCardSettings) -> Unit,
   modifier: Modifier = Modifier,
 ) {
   LazyColumn(
@@ -86,6 +92,13 @@ fun SettingsScreen(
       RememberMeSettingsContent(
         rememberMeSettings = rememberMeSettings,
         onUpdated = onUpdateRememberMeSettings,
+      )
+    }
+
+    item {
+      StoredCardSettingsContent(
+        storedCardSettings = storedCardSettings,
+        onUpdated = onUpdateStoredCardSettings,
       )
     }
   }
@@ -399,6 +412,74 @@ fun RememberMeSettingsContent(
   }
 }
 
+@Composable
+fun StoredCardSettingsContent(
+  storedCardSettings: StoredCardSettings,
+  modifier: Modifier = Modifier,
+  onUpdated: (StoredCardSettings) -> Unit = {},
+) {
+  PrimaryExpandableRow(
+    label = stringResource(R.string.label_stored_card_configuration),
+    isExpanded = storedCardSettings.storedCardSettingsExpanded,
+    onExpanded = { onUpdated(storedCardSettings.copy(storedCardSettingsExpanded = it)) },
+  ) {
+    Column(
+      modifier = modifier.padding(start = HEADER_VERTICAL_PADDING),
+      verticalArrangement = Arrangement.spacedBy(ROW_VERTICAL_PADDING),
+    ) {
+      SampleOutlineTextField(
+        label = stringResource(R.string.label_stored_card_customer_id),
+        state = rememberTextFieldState(storedCardSettings.customerId),
+        onDone = { onUpdated(storedCardSettings.copy(customerId = it)) },
+        onValueChange = { onUpdated(storedCardSettings.copy(customerId = it)) },
+      )
+
+      SecondaryDropdownRow(
+        label = stringResource(R.string.label_stored_card_display_mode),
+        options = StoredCardDisplayModeList,
+        selectedValue = storedCardSettings.displayMode,
+        selectedDisplayText = { it.displayName() },
+        displayText = { it.displayName() },
+      ) { displayMode ->
+        onUpdated(storedCardSettings.copy(displayMode = displayMode))
+      }
+
+      SwitchRow(
+        stringResource(R.string.label_stored_card_capture_cvv),
+        storedCardSettings.captureCardCvv,
+      ) { onUpdated(storedCardSettings.copy(captureCardCvv = it)) }
+
+      SecondaryExpandableRow(
+        label = stringResource(R.string.label_stored_card_accepted_schemes),
+      ) {
+        MultiSelectionList(
+          options = CardSchemeList,
+          selectedOptions = storedCardSettings.acceptedCardSchemes,
+          displayText = { it.displayName() },
+        ) { selectedScheme ->
+          val cardSchemes =
+            storedCardSettings.acceptedCardSchemes.addOrRemove(selectedScheme)
+          onUpdated(storedCardSettings.copy(acceptedCardSchemes = cardSchemes))
+        }
+      }
+
+      SecondaryExpandableRow(
+        label = stringResource(R.string.label_stored_card_accepted_types),
+      ) {
+        MultiSelectionList(
+          options = CardTypesList,
+          selectedOptions = storedCardSettings.acceptedCardTypes,
+          displayText = { it.displayName() },
+        ) { selectedType ->
+          val cardTypes =
+            storedCardSettings.acceptedCardTypes.addOrRemove(selectedType)
+          onUpdated(storedCardSettings.copy(acceptedCardTypes = cardTypes))
+        }
+      }
+    }
+  }
+}
+
 @Preview
 @Composable
 private fun BasicSettingsContentPreview() {
@@ -423,5 +504,13 @@ private fun AdvancedSettingsContentPreview() {
 private fun RememberMeSettingsContentPreview() {
   CheckoutComponentSampleTheme {
     RememberMeSettingsContent(rememberMeSettings = RememberMeSettings())
+  }
+}
+
+@Preview
+@Composable
+private fun StoredCardSettingsContentPreview() {
+  CheckoutComponentSampleTheme {
+    StoredCardSettingsContent(storedCardSettings = StoredCardSettings())
   }
 }

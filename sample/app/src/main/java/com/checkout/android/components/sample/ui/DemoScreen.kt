@@ -43,6 +43,7 @@ import com.checkout.android.components.sample.ui.model.PaymentComponentScreenSta
 import com.checkout.android.components.sample.ui.model.RememberMeSettings
 import com.checkout.android.components.sample.ui.model.SettingScreenState
 import com.checkout.android.components.sample.ui.model.Settings
+import com.checkout.android.components.sample.ui.model.StoredCardSettings
 import com.checkout.android.components.sample.ui.theme.CheckoutComponentSampleTheme
 import com.checkout.components.interfaces.api.PaymentMethodComponent
 
@@ -53,12 +54,14 @@ fun DemoScreen(
   settingState: Settings,
   advancedSettingsState: AdvancedSettings,
   rememberMeSettings: RememberMeSettings,
+  storedCardSettings: StoredCardSettings,
   modifier: Modifier = Modifier,
   showSettings: () -> Unit = {},
   showFlowComponent: () -> Unit,
   updateSettings: (Settings) -> Unit,
   updateAdvancedSettings: (AdvancedSettings) -> Unit,
   updateRememberMeSettings: (RememberMeSettings) -> Unit,
+  updateStoredCardSettings: (StoredCardSettings) -> Unit,
   onSubmitClicked: () -> Unit = {},
   onAmountChanged: (Int) -> Unit = {},
   onCheckTermsAndConditions: (Boolean) -> Unit = {},
@@ -94,6 +97,8 @@ fun DemoScreen(
             onUpdateAdvancedSettings = updateAdvancedSettings,
             rememberMeSettings = rememberMeSettings,
             onUpdateRememberMeSettings = updateRememberMeSettings,
+            storedCardSettings = storedCardSettings,
+            onUpdateStoredCardSettings = updateStoredCardSettings,
           )
         }
 
@@ -199,11 +204,13 @@ private fun DemoScreenPreview() {
       settingState = Settings(),
       advancedSettingsState = AdvancedSettings(),
       rememberMeSettings = RememberMeSettings(),
+      storedCardSettings = StoredCardSettings(),
       showSettings = {},
       showFlowComponent = {},
       updateSettings = {},
       updateAdvancedSettings = {},
       updateRememberMeSettings = {},
+      updateStoredCardSettings = {},
     )
   }
 }

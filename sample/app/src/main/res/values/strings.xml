@@ -50,4 +50,12 @@
     <string name="label_rememberme_country_code">Country Code</string>
     <string name="label_rememberme_phone_number">Phone Number</string>
 
+    <!-- Stored Card (Merchant Saved Card) Settings Section -->
+    <string name="label_stored_card_configuration">Stored Card Configurations</string>
+    <string name="label_stored_card_customer_id">Customer ID</string>
+    <string name="label_stored_card_display_mode">Display mode:</string>
+    <string name="label_stored_card_capture_cvv">Capture card CVV</string>
+    <string name="label_stored_card_accepted_schemes">Stored Card accepted card schemes</string>
+    <string name="label_stored_card_accepted_types">Stored Card accepted card types</string>
+
 </resources>

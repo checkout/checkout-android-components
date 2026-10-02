@@ -6,7 +6,9 @@ import com.checkout.android.components.sample.core.model.Address
 import com.checkout.android.components.sample.core.model.AddressAndPhoneNumber
 import com.checkout.android.components.sample.core.model.Customer
 import com.checkout.android.components.sample.core.model.Phone
+import com.checkout.android.components.sample.core.network.model.session.PaymentMethodConfiguration
 import com.checkout.android.components.sample.core.network.model.session.PaymentSessions
+import com.checkout.android.components.sample.core.network.model.session.StoredCardConfiguration
 import com.checkout.android.components.sample.core.network.model.session.SubmitPaymentSession
 import com.checkout.android.components.sample.core.network.repository.PaymentSessionRepository
 import com.checkout.android.components.sample.extension.toDesignTokens
@@ -14,6 +16,7 @@ import com.checkout.android.components.sample.extension.toPaymentSessionLocale
 import com.checkout.android.components.sample.ui.model.Components
 import com.checkout.android.components.sample.ui.model.PaymentMethods
 import com.checkout.android.components.sample.ui.model.Settings
+import com.checkout.android.components.sample.ui.model.StoredCardSettings
 import com.checkout.components.core.CheckoutComponentsFactory
 import com.checkout.components.interfaces.Environment
 import com.checkout.components.interfaces.api.CheckoutComponents
@@ -63,6 +66,7 @@ class FlowComponent @Inject constructor(
   suspend fun createConfigurationFromSettings(
     context: Context,
     settings: Settings = Settings(),
+    storedCardSettings: StoredCardSettings = StoredCardSettings(),
     callbacks: ComponentCallback,
   ): CheckoutComponentConfiguration {
     val publicKey = when (settings.environment) {
@@ -76,13 +80,14 @@ class FlowComponent @Inject constructor(
     }
 
     val paymentSession = PaymentSessions(
-      enabledPaymentMethods = enablePaymentMethod(settings),
+      enabledPaymentMethods = enablePaymentMethod(settings, storedCardSettings),
       processingChannelId = processingChannelId,
       locale = settings.psLocale.toPaymentSessionLocale(),
       currency = settings.psCurrency,
       billing = buildAddressAndPhone(settings.psCountry),
       customer = buildCustomer(settings.psCountry, settings.psEmail),
       shipping = buildAddressAndPhone(settings.psCountry),
+      paymentMethodConfiguration = buildPaymentMethodConfiguration(storedCardSettings),
     )
 
     val response = repository.createPaymentSession(
@@ -289,10 +294,30 @@ class FlowComponent @Inject constructor(
     }
   }
 
-  private fun enablePaymentMethod(settings: Settings): List<String> = if (settings.component == Components.Flow) {
-    settings.paymentMethods.map { it.name.lowercase() }
-  } else {
-    listOf(settings.component.name.lowercase())
+  private fun enablePaymentMethod(
+    settings: Settings,
+    storedCardSettings: StoredCardSettings,
+  ): List<String> {
+    val methods = if (settings.component == Components.Flow) {
+      settings.paymentMethods.map { it.name.lowercase() }.toMutableList()
+    } else {
+      mutableListOf(settings.component.name.lowercase())
+    }
+    if (storedCardSettings.enabled && STORED_CARD_METHOD !in methods) {
+      methods += STORED_CARD_METHOD
+    }
+    return methods
+  }
+
+  private fun buildPaymentMethodConfiguration(
+    storedCardSettings: StoredCardSettings,
+  ): PaymentMethodConfiguration? {
+    if (!storedCardSettings.enabled) {
+      return null
+    }
+    return PaymentMethodConfiguration(
+      storedCard = StoredCardConfiguration(customerId = storedCardSettings.customerId),
+    )
   }
 
   private fun buildPhone(country: String): Phone {
@@ -322,5 +347,9 @@ class FlowComponent @Inject constructor(
 
   private fun handleActivityResult(resultCode: Int, data: String) {
     checkoutComponent?.handleActivityResult(resultCode, data)
+  }
+
+  private companion object {
+    const val STORED_CARD_METHOD = "stored_card"
   }
 }
