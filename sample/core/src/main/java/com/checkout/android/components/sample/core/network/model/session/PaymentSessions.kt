@@ -24,10 +24,26 @@ data class PaymentSessions(
   val shipping: AddressAndPhoneNumber? = null,
   @SerialName("enabled_payment_methods")
   val enabledPaymentMethods: List<String>,
+  @SerialName("payment_method_configuration")
+  @EncodeDefault(EncodeDefault.Mode.NEVER)
+  val paymentMethodConfiguration: PaymentMethodConfiguration? = null,
   val items: List<PaymentItem> = listOf(PaymentItem("Item 1", 1, 100)),
   @SerialName("3ds")
   val threeDS: ThreeDS = ThreeDS(),
   val locale: String? = null,
+)
+
+@Serializable
+data class PaymentMethodConfiguration(
+  @SerialName("stored_card")
+  @EncodeDefault(EncodeDefault.Mode.NEVER)
+  val storedCard: StoredCardConfiguration? = null,
+)
+
+@Serializable
+data class StoredCardConfiguration(
+  @SerialName("customer_id")
+  val customerId: String,
 )
 
 @Serializable

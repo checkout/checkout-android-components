@@ -27,6 +27,7 @@ import com.checkout.components.interfaces.localisation.Locale.ZhHk
 import com.checkout.components.interfaces.localisation.Locale.ZhTw
 import com.checkout.components.interfaces.model.CardSchemeName
 import com.checkout.components.interfaces.model.CardTypeName
+import com.checkout.components.interfaces.model.StoredCardDisplayMode
 import com.checkout.components.interfaces.uicustomisation.designtoken.ColorTokens
 import com.checkout.components.interfaces.uicustomisation.designtoken.DefaultBorderRadius
 import com.checkout.components.interfaces.uicustomisation.designtoken.DefaultFonts
@@ -132,3 +133,13 @@ fun CardTypeName.displayName(): String = this::class.java.simpleName
  * @return The simple name of the underlying Java class.
  */
 fun CardSchemeName.displayName(): String = this::class.java.simpleName
+
+/**
+ * Retrieves a display-friendly, title-cased name for the [StoredCardDisplayMode].
+ *
+ * @return "Default only" for [StoredCardDisplayMode.DEFAULT_ONLY] and "All" for [StoredCardDisplayMode.ALL].
+ */
+fun StoredCardDisplayMode.displayName(): String = when (this) {
+  StoredCardDisplayMode.DEFAULT_ONLY -> "Default only"
+  StoredCardDisplayMode.ALL -> "All"
+}
