@@ -15,7 +15,7 @@ val RegionPresetList = RegionPreset.entries.toList()
 
 val CurrencyList = listOf("GBP", "USD", "EUR", "SAR", "AED", "KWD", "SGD")
 
-val BillingCountryList = listOf("GB", "US", "DE", "SA", "AE", "KW", "SG")
+val BillingCountryList = listOf("GB", "US", "DE", "SA", "AE", "KW", "SG", "NL")
 
 val EnvironmentList = Environment.entries.toList()
 

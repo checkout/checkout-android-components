@@ -21,7 +21,7 @@
     <string name="label_ps_locale">PS Locale:</string>
     <string name="label_region_preset">Region Preset:</string>
     <string name="label_currency">Currency:</string>
-    <string name="label_billing_country">Address Country:</string>
+    <string name="label_billing_country">Country:</string>
     <string name="label_session_email">Customer Email:</string>
     <string name="label_session_phone_number">Customer Phone Number:</string>
     <string name="label_payment_session_setup">Payment Session Setup</string>
