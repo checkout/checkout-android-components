@@ -182,12 +182,6 @@ fun BasicSettingsContent(
       settings.psLocale,
     ) { localeSelection -> onUpdated(settings.copy(psLocale = localeSelection)) }
 
-    StatefulDropdownRow(
-      stringResource(R.string.label_currency),
-      CurrencyList,
-      settings.psCurrency,
-    ) { currency -> onUpdated(settings.copy(psCurrency = currency)) }
-
     PaymentSessionSetupContent(
       settings = settings,
       onUpdated = onUpdated,
@@ -211,6 +205,12 @@ fun PaymentSessionSetupContent(
       verticalArrangement = Arrangement.spacedBy(ROW_VERTICAL_PADDING),
     ) {
       val latestSettings = rememberUpdatedState(settings)
+
+      StatefulDropdownRow(
+        stringResource(R.string.label_currency),
+        CurrencyList,
+        settings.psCurrency,
+      ) { currency -> onUpdated(latestSettings.value.copy(psCurrency = currency)) }
 
       StatefulDropdownRow(
         stringResource(R.string.label_billing_country),
