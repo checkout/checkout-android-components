@@ -29,6 +29,7 @@ import com.checkout.components.interfaces.model.CardMetadata
 import com.checkout.components.interfaces.model.Phone
 import com.checkout.components.interfaces.model.TokenizationResult
 import com.checkout.components.interfaces.model.UpdateDetails
+import com.checkout.components.interfaces.model.WalletAuthorization
 import com.checkout.components.wallet.WalletComponent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -275,6 +276,8 @@ class MainViewModel @Inject constructor(
 
     onCardBinChanged = ::onCardBinChanged,
 
+    onAuthorized = ::onAuthorized,
+
     onTokenized = ::onTokenize,
 
     handleSubmit = if (advancedSettings.value.submitPayment == SubmitPaymentHandler.HandleSubmit) ::handleSubmit else null,
@@ -307,6 +310,11 @@ class MainViewModel @Inject constructor(
 
   private fun onCardBinChanged(cardMetadata: CardMetadata): CallbackResult {
     println("onCardBinChanged: $cardMetadata")
+    return CallbackResult.Accepted
+  }
+
+  private fun onAuthorized(walletAuthorization: WalletAuthorization): CallbackResult {
+    println("onAuthorized: $walletAuthorization")
     return CallbackResult.Accepted
   }
 
